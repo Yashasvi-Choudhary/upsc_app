@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subjects</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold text-blue-800 mb-6">
+        Class {{ class_num }} - Select Subject
+      </h1>
+      <ul class="space-y-4">
+        {% for subject in subjects %}
+        <li>
+          <a
+            href="{{ url_for('chapters', class_num=class_num, subject=subject) }}"
+            class="block bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 text-blue-600 hover:text-blue-800"
+          >
+            {{ subject }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <title>Register - UPSC Prep</title>
+    <style>
+      .input-group {
+        position: relative;
+      }
+      .input-group input {
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+        outline: none;
+        width: 100%;
+        padding: 10px 30px 10px 0;
+        color: #1e3a8a;
+        font-size: 16px;
+      }
+      .input-group label {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+      .input-group input:focus + label,
+      .input-group input:not(:placeholder-shown) + label {
+        top: 0;
+        font-size: 12px;
+        color: #1e3a8a;
+      }
+      .input-group i {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="flex items-center justify-center min-h-screen bg-[#f8f9fa]">
+      <div
+        class="bg-white/60 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-96 text-gray-900 border border-gray-300 relative"
+      >
+        <h2 class="text-2xl font-semibold text-center mb-6">Register</h2>
+
+        <!-- Error Message Display -->
+        {% if message %}
+        <p class="text-red-600 text-center mb-4">{{ message }}</p>
+        {% endif %}
+
+        <form action="/register" method="POST">
+          <div class="mb-6 input-group">
+            <input
+              type="text"
+              name="username"
+              id="username"
+              placeholder=" "
+              required
+            />
+            <label for="username">Username</label>
+            <i class="fas fa-user"></i>
+          </div>
+
+          <div class="mb-6 input-group">
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder=" "
+              required
+            />
+            <label for="email">Email</label>
+            <i class="fas fa-envelope"></i>
+          </div>
+
+          <div class="mb-6 input-group">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder=" "
+              required
+            />
+            <label for="password">Password</label>
+            <i class="fas fa-lock"></i>
+          </div>
+
+          <!-- Confirm Password Field -->
+          <div class="mb-6 input-group">
+            <input
+              type="password"
+              name="confirm_password"
+              id="confirm_password"
+              placeholder=" "
+              required
+            />
+            <label for="confirm_password">Confirm Password</label>
+            <i class="fas fa-lock"></i>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded-lg shadow-lg transition"
+          >
+            Register
+          </button>
+
+          <p class="text-center text-sm mt-4">
+            Already have an account?
+            <a href="/login" class="text-blue-700 hover:underline">Login</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

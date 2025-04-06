@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <title>Login - UPSC Prep</title>
+    <style>
+      .input-group {
+        position: relative;
+      }
+      .input-group input {
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+        outline: none;
+        width: 100%;
+        padding: 10px 30px 10px 0;
+        color: #1e3a8a;
+        font-size: 16px;
+      }
+      .input-group label {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+      .input-group input:focus + label,
+      .input-group input:not(:placeholder-shown) + label {
+        top: 0;
+        font-size: 12px;
+        color: #1e3a8a;
+      }
+      .input-group i {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(0, 0, 0, 0.5);
+      }
+    </style>
+  </head>
+  <body class="bg-[#f8f9fa]">
+    <div class="flex items-center justify-center min-h-screen">
+      <div
+        class="bg-white/60 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-96 text-gray-900 border border-gray-300 relative"
+      >
+        <h2 class="text-2xl font-semibold text-center mb-6">Login</h2>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div
+          class="mb-4 p-3 text-sm text-white rounded-lg bg-{{ 'red-600' if category == 'danger' else 'green-600' }}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <form action="/login" method="POST" onsubmit="return validateForm()">
+          <div class="mb-6 input-group">
+            <input
+              type="email"
+              name="email"
+              id="email"
+              placeholder=" "
+              required
+            />
+            <label for="email">Email</label>
+            <i class="fas fa-envelope"></i>
+          </div>
+
+          <div class="mb-16 input-group">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder=" "
+              required
+            />
+            <label for="password">Password</label>
+            <i class="fas fa-lock"></i>
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded-lg shadow-lg transition"
+          >
+            Login
+          </button>
+
+          <p class="text-center text-sm mt-4">
+            Don't have an account?
+            <a href="/register" class="text-blue-700 hover:underline"
+              >Register</a
+            >
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function validateForm() {
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        if (!email || !password) {
+          alert("Please fill in all fields!");
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </body>
+</html>
