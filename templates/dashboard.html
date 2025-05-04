@@ -1,47 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Document</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-  </head>
-  <body>
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-2xl font-bold mb-4">Welcome to Your Dashboard</h2>
-      <div class="grid grid-cols-2 gap-4">
-        <a
-          href="/current_affairs"
-          class="block bg-teal-500 text-white p-4 rounded text-center"
-          >Current Affairs</a
-        >
-        <a
-          href="/static_gk"
-          class="block bg-teal-500 text-white p-4 rounded text-center"
-          >Static GK</a
-        >
-        <a
-          href="/syllabus"
-          class="block bg-teal-500 text-white p-4 rounded text-center"
-          >UPSC Syllabus</a
-        >
-        <a
-          href="/generate_quiz"
-          class="block bg-teal-500 text-white p-4 rounded text-center"
-          >Mock Tests</a
-        >
-        <a
-          href="/previous_papers"
-          class="block bg-teal-500 text-white p-4 rounded text-center"
-          >Previous Papers</a
-        >
-        <a
-          href="/ncert_index"
-          class="block bg-teal-500 text-white p-4 rounded text-center"
-          >NCERT Books</a
-        >
+<!-- templates/dashboard.html -->
+{% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
+%} {% block content %}
+<div class="flex justify-center">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-10">
+    <a href="#" class="block">
+      <div
+        class="bg-teal-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/brain.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">AI Quiz Generator</p>
       </div>
-    </div>
-  </body>
-</html>
+    </a>
+
+    <a href="{{ url_for('CA_index') }}" class="block">
+      <div
+        class="bg-yellow-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img src="https://img.icons8.com/ios-filled/60/news.png" class="mb-3" />
+        <p class="font-semibold text-base">Current Affairs</p>
+      </div>
+    </a>
+
+    <a href="syllabus" class="block">
+      <div
+        class="bg-blue-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/clipboard.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">Syllabus</p>
+      </div>
+    </a>
+
+    <a href="{{ url_for('pyq_examtype') }}" class="block">
+      <div
+        class="bg-red-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/open-book--v1.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">PYQs</p>
+      </div>
+    </a>
+
+    <a href="{{ url_for('class_select') }}" class="block">
+      <div
+        class="bg-green-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/books.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">NCERT Books</p>
+      </div>
+    </a>
+
+    <a href="static_gk" class="block">
+      <div
+        class="bg-indigo-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/light-on.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">Static GK</p>
+      </div>
+    </a>
+
+    <a href="{{ url_for('csat_practice') }}" class="block">
+      <div
+        class="bg-violet-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/book-shelf.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">CSAT Practice</p>
+      </div>
+    </a>
+
+    <a href="#" class="block">
+      <div
+        class="bg-pink-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/edit--v1.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">Answer Writing</p>
+      </div>
+    </a>
+
+    <a href="#" class="block">
+      <div
+        class="bg-orange-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img
+          src="https://img.icons8.com/ios-filled/60/microphone.png"
+          class="mb-3"
+        />
+        <p class="font-semibold text-base">Interview Prep</p>
+      </div>
+    </a>
+
+    <a href="#" class="block">
+      <div
+        class="bg-purple-500 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+      >
+        <img src="https://img.icons8.com/ios-filled/60/task.png" class="mb-3" />
+        <p class="font-semibold text-base">Study Tracker</p>
+      </div>
+    </a>
+  </div>
+</div>
+{% endblock %}

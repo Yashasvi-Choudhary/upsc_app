@@ -1,114 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>UPSC Syllabus</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        font-family: "Inter", sans-serif;
-      }
-    </style>
-  </head>
-  <body class="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900">
-    <div
-      class="max-w-5xl mx-auto p-10 bg-white shadow-2xl rounded-2xl mt-10 border border-gray-300"
+{% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
+%} {% block content %}
+<div class="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900">
+  <div
+    class="max-w-5xl mx-auto p-10 bg-white shadow-2xl rounded-2xl mt-10 border border-gray-300"
+  >
+    <h1
+      class="text-5xl font-extrabold text-center text-teal-700 uppercase tracking-wide"
     >
-      <h1
-        class="text-5xl font-extrabold text-center text-teal-700 uppercase tracking-wide"
+      UPSC Syllabus
+    </h1>
+
+    <!-- Prelims Section -->
+    <section class="mt-10">
+      <h2
+        class="text-4xl font-bold text-gray-800 border-b-4 border-teal-500 pb-2"
       >
-        UPSC Syllabus
-      </h1>
+        Preliminary Exam (Prelims)
+      </h2>
+      <h3 class="text-2xl font-semibold text-gray-700 mt-6">
+        General Studies Paper I
+      </h3>
+      <ul
+        class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
+      >
+        <li>🌍 Current events of national and international importance</li>
+        <li>📜 History of India and the Indian National Movement</li>
+        <li>🗺 Indian and World Geography</li>
+        <li>⚖ Indian Polity and Governance</li>
+        <li>📊 Economic and Social Development</li>
+        <li>🔬 General Science</li>
+      </ul>
 
-      <!-- Prelims Section -->
-      <section class="mt-10">
-        <h2
-          class="text-4xl font-bold text-gray-800 border-b-4 border-teal-500 pb-2"
-        >
-          Preliminary Exam (Prelims)
-        </h2>
-        <h3 class="text-2xl font-semibold text-gray-700 mt-6">
-          General Studies Paper I
-        </h3>
-        <ul
-          class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
-        >
-          <li>🌍 Current events of national and international importance</li>
-          <li>📜 History of India and the Indian National Movement</li>
-          <li>🗺 Indian and World Geography</li>
-          <li>⚖ Indian Polity and Governance</li>
-          <li>📊 Economic and Social Development</li>
-          <li>🔬 General Science</li>
-        </ul>
+      <h3 class="text-2xl font-semibold text-gray-700 mt-8">
+        CSAT (Paper II - Qualifying)
+      </h3>
+      <ul
+        class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
+      >
+        <li>📖 Comprehension</li>
+        <li>🧠 Logical reasoning and analytical ability</li>
+        <li>📝 Decision-making and problem-solving</li>
+        <li>🧮 General mental ability</li>
+        <li>🔢 Basic numeracy (Class X level)</li>
+      </ul>
+    </section>
 
-        <h3 class="text-2xl font-semibold text-gray-700 mt-8">
-          CSAT (Paper II - Qualifying)
-        </h3>
-        <ul
-          class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
-        >
-          <li>📖 Comprehension</li>
-          <li>🧠 Logical reasoning and analytical ability</li>
-          <li>📝 Decision-making and problem-solving</li>
-          <li>🧮 General mental ability</li>
-          <li>🔢 Basic numeracy (Class X level)</li>
-        </ul>
-      </section>
+    <!-- Mains Section -->
+    <section class="mt-10">
+      <h2
+        class="text-4xl font-bold text-gray-800 border-b-4 border-teal-500 pb-2"
+      >
+        Mains Exam
+      </h2>
+      <h3 class="text-2xl font-semibold text-gray-700 mt-6">
+        Qualifying Papers
+      </h3>
+      <ul
+        class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
+      >
+        <li>🖋 Indian Language (Qualifying)</li>
+        <li>🗣 English (Qualifying)</li>
+      </ul>
 
-      <!-- Mains Section -->
-      <section class="mt-10">
-        <h2
-          class="text-4xl font-bold text-gray-800 border-b-4 border-teal-500 pb-2"
-        >
-          Mains Exam
-        </h2>
-        <h3 class="text-2xl font-semibold text-gray-700 mt-6">
-          Qualifying Papers
-        </h3>
-        <ul
-          class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
-        >
-          <li>🖋 Indian Language (Qualifying)</li>
-          <li>🗣 English (Qualifying)</li>
-        </ul>
+      <h3 class="text-2xl font-semibold text-gray-700 mt-8">Merit Papers</h3>
+      <ul
+        class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
+      >
+        <li>📝 Essay Paper</li>
+        <li>🏛 General Studies I – History, Geography, Indian Culture</li>
+        <li>
+          ⚖ General Studies II – Polity, Governance, International Relations
+        </li>
+        <li>📈 General Studies III – Economy, Science & Tech, Environment</li>
+        <li>💡 General Studies IV – Ethics, Integrity, and Aptitude</li>
+        <li>📚 Optional Subject Paper I</li>
+        <li>📖 Optional Subject Paper II</li>
+      </ul>
+    </section>
 
-        <h3 class="text-2xl font-semibold text-gray-700 mt-8">Merit Papers</h3>
-        <ul
-          class="list-disc ml-10 text-lg text-gray-800 font-medium leading-relaxed"
-        >
-          <li>📝 Essay Paper</li>
-          <li>🏛 General Studies I – History, Geography, Indian Culture</li>
-          <li>
-            ⚖ General Studies II – Polity, Governance, International Relations
-          </li>
-          <li>📈 General Studies III – Economy, Science & Tech, Environment</li>
-          <li>💡 General Studies IV – Ethics, Integrity, and Aptitude</li>
-          <li>📚 Optional Subject Paper I</li>
-          <li>📖 Optional Subject Paper II</li>
-        </ul>
-      </section>
-
-      <!-- PDF Download Section -->
-      <div class="mt-10 text-center">
-        <button
-          id="downloadPDF"
-          class="mt-6 bg-teal-700 text-white px-6 py-3 rounded-lg shadow-xl text-lg font-bold hover:bg-teal-800 transition duration-300"
-        >
-          📄 Download Syllabus as PDF
-        </button>
-      </div>
+    <!-- PDF Download Section -->
+    <div class="mt-10 text-center">
+      <button
+        id="downloadPDF"
+        class="mt-6 bg-teal-700 text-white px-6 py-3 rounded-lg shadow-xl text-lg font-bold hover:bg-teal-800 transition duration-300"
+      >
+        📄 Download Syllabus as PDF
+      </button>
     </div>
-
-    <script>
-      document
-        .getElementById("downloadPDF")
-        .addEventListener("click", function () {
-          const element = document.querySelector(".max-w-5xl"); // Select the main syllabus section
-          html2pdf().from(element).save("UPSC_Syllabus.pdf");
-        });
-    </script>
-  </body>
-</html>
+  </div>
+</div>
+<script>
+  document.getElementById("downloadPDF").addEventListener("click", function () {
+    const element = document.querySelector(".max-w-5xl"); // Select the main syllabus section
+    html2pdf().from(element).save("UPSC_Syllabus.pdf");
+  });
+</script>
+{% endblock %}

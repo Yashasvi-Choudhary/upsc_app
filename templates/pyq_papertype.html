@@ -5,7 +5,7 @@
     <!-- Back Button and Heading -->
     <div class="flex items-center justify-center relative mb-12">
       <a
-        href="{{ url_for('dashboard') }}"
+        href="{{ url_for('pyq_examtype') }}"
         class="w-12 h-12 bg-white text-red-600 hover:bg-red-200 rounded-full flex items-center justify-center shadow transition-colors absolute left-0"
       >
         <i class="fas fa-arrow-left"></i>
@@ -18,20 +18,27 @@
 
     <!-- Sub Heading -->
     <div class="mb-16 text-2xl font-semibold text-black text-center ml-12">
-      <h2 class="text-3xl font-bold text-black">Select Examination Type :</h2>
+      <h2 class="text-3xl font-bold text-black">
+        {{ exam_type }} - Select Paper Type
+      </h2>
     </div>
 
-    <!-- Exam Type Boxes Centered -->
+    <!-- Paper Types Centered -->
     <div class="flex flex-wrap justify-center gap-12">
-      {% for exam_type in exam_types %}
-      <a href="{{ url_for('pyq_papertype', exam_type=exam_type) }}">
+      {% for paper_type in paper_types %}
+      <a
+        href="{{ url_for('pyq_year', exam_type=exam_type, paper_type=paper_type) }}"
+      >
         <div
           class="w-72 h-48 border-2 border-red-400 bg-white p-8 rounded-2xl shadow-md cursor-pointer text-center flex flex-col justify-center transition-all duration-300 hover:bg-red-400 hover:text-white hover:scale-105"
         >
-          <h3 class="text-2xl font-bold mb-3">{{ exam_type }}</h3>
+          <h3 class="text-2xl font-bold mb-3">{{ paper_type }}</h3>
           <p class="text-gray-600 hover:text-white text-base">
-            {% if exam_type == 'PRELIMS' %} Civil Services Preliminary
-            Examination {% else %} Civil Services Main Examination {% endif %}
+            {% if paper_type == 'GENERAL STUDIES (GS)' %} Paper I {% elif
+            paper_type == 'CSAT' %} Paper II {% elif paper_type.startswith('GS')
+            %} {{ paper_type }} {% elif paper_type == 'ESSAY' %} Essay Paper {%
+            elif paper_type == 'QUALIFYING PAPERS' %} Language Papers {% else %}
+            {{ paper_type }} {% endif %}
           </p>
         </div>
       </a>

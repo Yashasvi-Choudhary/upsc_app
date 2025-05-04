@@ -3,10 +3,443 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>UPSC Aspirant App</title>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Animation for Hover Effects */
+      .animated-box {
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+      }
+
+      .animated-box:hover {
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Watermark effect */
+      #about-exam {
+        position: relative;
+        overflow: hidden;
+      }
+
+      #about-exam .absolute {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.1;
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      /* Animation for Fade-in and Upwards Motion */
+      .animate__animated {
+        animation-duration: 1s;
+        animation-timing-function: ease-in-out;
+      }
+
+      .animate__fadeIn {
+        animation-name: fadeIn;
+      }
+
+      .animate__fadeInUp {
+        animation-name: fadeInUp;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate__fadeInUp.delay-1s {
+        animation-delay: 1s;
+      }
+    </style>
   </head>
-  <body>
-    <h1>Welcome to UPSC Preparation App</h1>
-    <p>Your one-stop solution for UPSC preparation.</p>
+  <body
+    class="bg-gradient-to-r from-purple-700 via-pink-500 to-red-400 text-white font-sans"
+  >
+    <!-- Header -->
+    <header
+      class="flex justify-between items-center px-6 py-4 bg-white bg-opacity-80 text-black fixed w-full z-50 shadow-xl"
+    >
+      <div class="text-2xl font-extrabold tracking-tight">🛡️ UPSC Aspirant</div>
+      <nav class="space-x-6 text-lg font-medium">
+        <a href="#about-exam" class="hover:text-red-600 transition duration-300"
+          >About UPSC</a
+        >
+        <a href="#exam-types" class="hover:text-red-600 transition duration-300"
+          >Exam Stages</a
+        >
+        <a href="#features" class="hover:text-red-600 transition duration-300"
+          >Features</a
+        >
+        <a href="/login" class="hover:text-red-600 transition duration-300"
+          >Login</a
+        >
+        <a href="/register" class="hover:text-red-600 transition duration-300"
+          >Register</a
+        >
+      </nav>
+    </header>
+
+    <!-- Hero Section with Animation -->
+    <section
+      class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-24"
+    >
+      <lottie-player
+        src="https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json"
+        background="transparent"
+        speed="1"
+        style="width: 300px; height: 300px"
+        loop
+        autoplay
+      ></lottie-player>
+      <h1 class="text-5xl font-extrabold mb-4 drop-shadow-md">
+        Master the UPSC Exam with Confidence
+      </h1>
+      <p class="text-xl max-w-3xl">
+        Your personal guide for one of India’s toughest exams — powered by smart
+        tools and proven strategies.
+      </p>
+      <div class="mt-6 space-x-4">
+        <a
+          href="/register"
+          class="bg-black px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition"
+          >Get Started</a
+        >
+      </div>
+    </section>
+
+    <!-- About UPSC Section -->
+    <section id="about-exam" class="py-16 text-white relative">
+      <!-- Watermark Effect -->
+      <div
+        class="absolute inset-0 opacity-10 bg-center bg-no-repeat"
+        style="background-image: url('path-to-your-watermark-image.png')"
+      ></div>
+
+      <div class="max-w-6xl mx-auto text-center relative z-10 px-6">
+        <!-- Title Section -->
+        <h2
+          class="text-5xl font-bold mb-6 leading-tight animate__animated animate__fadeIn"
+        >
+          About the UPSC Exam
+        </h2>
+        <p
+          class="text-lg mb-8 opacity-90 animate__animated animate__fadeInUp delay-1s max-w-2xl mx-auto"
+        >
+          The Union Public Service Commission (UPSC) conducts the Civil Services
+          Examination (CSE) to recruit for top-tier services like IAS, IPS, IFS,
+          IRS, and others. The exam is widely regarded as one of the toughest in
+          India, requiring a deep understanding of diverse subjects, clarity of
+          thought, and excellent problem-solving skills.
+        </p>
+
+        <!-- Minimum Criteria -->
+        <div
+          class="text-left max-w-3xl mx-auto bg-white bg-opacity-80 p-8 rounded-xl shadow-xl mb-12"
+        >
+          <h3 class="text-2xl font-semibold mb-4 text-gray-900">
+            Minimum Criteria to Pass the UPSC Exam
+          </h3>
+          <ul class="list-disc pl-5 space-y-2 text-gray-800">
+            <li>
+              Age Limit: 21 to 32 years (for general category, relaxable for
+              reserved categories)
+            </li>
+            <li>
+              Education: A bachelor's degree in any discipline from a recognized
+              university
+            </li>
+            <li>Physical and Medical Standards (for services like IPS)</li>
+            <li>
+              Clearance of all stages of the exam (Prelims, Mains, and
+              Interview)
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Exam Stages Section -->
+    <section
+      id="exam-types"
+      class="py-16 bg-gradient-to-r from-purple-700 via-pink-500 to-red-400 text-white"
+    >
+      <div class="max-w-6xl mx-auto text-center px-6">
+        <h2 class="text-4xl font-bold mb-8 text-white">
+          UPSC Exam Stages & Details
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Prelims Box -->
+          <div
+            class="p-8 bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animated-box"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-blue-600">Prelims</h3>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li><strong>Format:</strong> MCQ (Multiple Choice Questions)</li>
+              <li>
+                <strong>Paper 1:</strong> General Studies (GS) – 200 marks
+              </li>
+              <li>
+                <strong>Paper 2:</strong> Civil Services Aptitude Test (CSAT) –
+                200 marks (qualifying)
+              </li>
+              <li><strong>CSAT:</strong> Minimum 33% required to qualify</li>
+              <li><strong>Total Marks:</strong> 400 (both papers combined)</li>
+              <li>
+                <strong>Purpose:</strong> Filters candidates for the Mains stage
+              </li>
+            </ul>
+          </div>
+
+          <!-- Mains Box -->
+          <div
+            class="p-8 bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animated-box"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-green-600">Mains</h3>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li><strong>Format:</strong> Descriptive (Written Papers)</li>
+              <li>
+                <strong>Total Papers:</strong> 9 papers (including General
+                Studies, Optional Subject, and Essay)
+              </li>
+              <li><strong>Marks:</strong> 1750 marks total for all papers</li>
+              <li>
+                <strong>Core Evaluation:</strong> Assesses in-depth knowledge
+                across various subjects
+              </li>
+              <li>
+                <strong>Language Papers:</strong> Includes a paper for Indian
+                language (qualifying)
+              </li>
+              <li>
+                <strong>Optional Subject:</strong> Candidate’s choice of subject
+                (decides specialization)
+              </li>
+            </ul>
+          </div>
+
+          <!-- Interview Box -->
+          <div
+            class="p-8 bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:scale-105 hover:shadow-2xl animated-box"
+          >
+            <h3 class="text-xl font-semibold mb-4 text-purple-600">
+              Interview
+            </h3>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700">
+              <li>
+                <strong>Format:</strong> Personality Test (Conducted by UPSC
+                panel)
+              </li>
+              <li><strong>Marks:</strong> 275 marks</li>
+              <li>
+                <strong>Evaluation:</strong> Soft skills, ethics,
+                decision-making, and mental agility
+              </li>
+              <li>
+                <strong>Purpose:</strong> Tests candidates’ personality and
+                suitability for civil services
+              </li>
+              <li>
+                <strong>Criteria:</strong> Marks in Mains and Interview combined
+                decide the final ranking
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section
+      id="features"
+      class="p-12 bg-gradient-to-r from-purple-700 via-pink-500 to-red-400 text-gray-900"
+    >
+      <div class="max-w-6xl mx-auto text-center">
+        <h2 class="text-4xl font-bold text-white mb-10">
+          Explore Our Features
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Current Affairs Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-red-500">📰</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >Current Affairs</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Weekly updates by categories, ensuring you stay informed.
+            </p>
+          </div>
+
+          <!-- AI Mock Tests Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-blue-500">🤖</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >AI Mock Tests</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Real-time test evaluation for an accurate assessment of your
+              progress.
+            </p>
+          </div>
+
+          <!-- Syllabus & NCERTs Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-green-500">📘</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >Syllabus & NCERTs</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Digitized content and PDF access to guide your preparation.
+            </p>
+          </div>
+
+          <!-- Previous Year Question Papers Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-yellow-500">📂</div>
+            <strong class="text-xl font-semibold text-gray-800">PYQs</strong>
+            <p class="mt-2 text-gray-700">
+              Prelims & Mains sorted by year to help you practice effectively.
+            </p>
+          </div>
+
+          <!-- Answer Writing Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-purple-500">✍️</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >Answer Writing</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Improvement with AI feedback to help you master answer writing
+              skills.
+            </p>
+          </div>
+
+          <!-- Interview Preparation Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-orange-500">🎤</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >Interview Prep</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Mock interviews with experts to prepare you for the final round.
+            </p>
+          </div>
+
+          <!-- Static GK Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-teal-500">🌍</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >Static GK</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Topic-based facts and sheets to strengthen your general knowledge.
+            </p>
+          </div>
+
+          <!-- Optional Subjects Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-indigo-500">📚</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >Optional Subjects</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Specialized content to guide you through your chosen subject.
+            </p>
+          </div>
+
+          <!-- Study Tracker Feature -->
+          <div
+            class="p-6 bg-white rounded-xl animated-box shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div class="text-4xl mb-4 text-pink-500">📈</div>
+            <strong class="text-xl font-semibold text-gray-800"
+              >Study Tracker</strong
+            >
+            <p class="mt-2 text-gray-700">
+              Monitor your daily targets and track your study progress.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section
+      class="p-12 bg-gradient-to-r from-purple-700 via-pink-500 to-red-400 text-center text-white"
+    >
+      <h2 class="text-4xl font-bold mb-4">Begin Your UPSC Journey</h2>
+      <p class="mb-6 text-lg">
+        All-in-one guidance platform to prepare with confidence and crack the
+        toughest exam.
+      </p>
+      <a
+        href="/register"
+        class="bg-white text-red-700 px-8 py-3 rounded-full font-semibold hover:bg-gray-200 transition"
+        >Register Now</a
+      >
+    </section>
+
+    <!-- Dynamic Footer -->
+    <footer
+      class="p-6 text-center bg-gradient-to-r from-black via-gray-800 to-black text-white"
+    >
+      &copy; 2025 UPSC Aspirant App | Built for Success | All Rights Reserved
+    </footer>
+
+    <!-- ScrollReveal Initialization -->
+    <script>
+      ScrollReveal().reveal("section", {
+        delay: 150,
+        distance: "40px",
+        origin: "bottom",
+        duration: 900,
+        reset: true,
+      });
+    </script>
   </body>
 </html>

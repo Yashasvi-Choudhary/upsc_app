@@ -1,0 +1,89 @@
+{
+  "Class 6": {
+    "History": "https://www.drishtiias.com/images/pdf/History6.pdf",
+    "Political": "https://www.drishtiias.com/images/pdf/Polity6.pdf",
+    "Geography": "https://www.drishtiias.com/images/pdf/Geography.pdf",
+    "Science": "https://www.drishtiias.com/free-downloads/ncert-books-science-download"
+  },
+  "Class 7": {
+    "History": "https://www.drishtiias.com/images/pdf/Copy%20of%20our%20past%20class%207%20social%20science.pdf",
+    "Political": "https://www.drishtiias.com/images/pdf/social%20science%207.pdf",
+    "Geography": "https://www.drishtiias.com/images/pdf/Copy%20of%20our%20environmemnt%20class%207%20-%20Copy.pdf",
+    "Science": "https://www.drishtiias.com/images/pdf/Copy%20of%20science%20class%207.pdf"
+  },
+  "Class 8": {
+    "History": "https://www.drishtiias.com/images/pdf/OUR%20PAST%20PART%202%20CLASS%208%20SOCIAL%20SCIENCE.pdf",
+    "Political": "https://www.drishtiias.com/images/pdf/social%20science%20demo%20part%201.pdf",
+    "Geography": "https://www.drishtiias.com/images/pdf/social%20science%20class%208.pdf",
+    "Science": "https://www.drishtiias.com/images/pdf/science%20class%208.pdf"
+  },
+  "Class 9": {
+    "History": "https://www.drishtiias.com/images/pdf/class%209%20abc.pdf",
+    "Political": "https://www.drishtiias.com/images/pdf/class%209%20science.pdf",
+    "Geography": "https://www.drishtiias.com/images/pdf/NCERT-Class-9-Geography-1.pdf",
+    "Science": "https://www.drishtiias.com/images/pdf/class%209%20science.pdf",
+    "Economics": "https://www.drishtiias.com/images/pdf/economics%20class%209.pdf"
+  },
+  "Class 10": {
+    "History": "https://www.drishtiias.com/images/pdf/NCERT-Class-10-History.pdf",
+    "Political": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Political-Science-Part-1.pdf",
+    "Geography": "https://www.drishtiias.com/images/pdf/NCERT-Class-10-Geography.pdf",
+    "Science": "https://www.drishtiias.com/images/pdf/NCERT-Class-9-Science-Exemplar-Problems.pdf",
+    "Economics": "https://www.drishtiias.com/images/pdf/NCERT-Class-10-Economics.pdf"
+  },
+  "Class 11": {
+    "History": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-History.pdf",
+    "Political": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Political-Science-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Political-Science-Part-2-1.pdf"
+    },
+    "Geography": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Geography-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Geography-Part-2%20(1).pdf",
+      "3": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Geography-Part-2%20(1).pdf"
+    },
+    "Biology": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Geography-Part-2%20(1).pdf",
+    "Chemistry": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Chemistry-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Chemistry-Part-2.pdf"
+    },
+    "Physics": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Physics-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Physics-Part-1.pdf"
+    },
+    "Art & Culture": {
+      "1": "https://www.drishtiias.com/images/pdf/Introduction%20to%20Indian%20Art%20%20_.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Heritage-Crafts.pdf"
+    },
+    "Economics": "https://www.drishtiias.com/images/pdf/NCERT-Class-11-Economics.pdf"
+  },
+  "Class 12": {
+    "History": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-History-Part-1%20(1).pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-History-Part-2.pdf",
+      "3": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-History-Part-3.pdf"
+    },
+    "Political": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Political-Science-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Political-Science-Part-1.pdf"
+    },
+    "Geography": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Geography-Part-2.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Geography-Part-1.pdf"
+    },
+    "Biology": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Biology.pdf",
+    "Chemistry": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Chemistry-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Chemistry-Part-2.pdf"
+    },
+    "Physics": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Physics-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Physics-Part-2.pdf"
+    },
+    "Art & Culture": "https://www.drishtiias.com/images/pdf/Class_XII_Heritage_Craft_-_Craft_Traditions_of_India.pdf",
+    "Economics": {
+      "1": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Economics-Part-1.pdf",
+      "2": "https://www.drishtiias.com/images/pdf/NCERT-Class-12-Economics-Part-2.pdf"
+    }
+  }
+}

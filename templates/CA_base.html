@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>UPSC Current Affairs</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="bg-blue-900 text-white p-4">
+      <h1 class="text-2xl font-bold">UPSC Current Affairs</h1>
+    </header>
+
+    <!-- Navbar -->
+    <nav class="bg-blue-700 text-white p-2">
+      <div class="flex justify-between items-center">
+        <div class="flex space-x-4">
+          {% for cat in categories %}
+          <a
+            href="{{ url_for('CA_index') }}?category={{ cat }}"
+            class="hover:underline capitalize"
+            >{{ cat }}</a
+          >
+          {% endfor %}
+        </div>
+        <form action="{{ url_for('CA_index') }}" method="get">
+          <input
+            type="text"
+            name="q"
+            placeholder="Search..."
+            class="text-black px-2 py-1"
+          />
+          <button type="submit" class="bg-white text-blue-700 px-2 py-1">
+            Search
+          </button>
+        </form>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto p-4">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white p-4 text-center">
+      <p>
+        &copy; {{ datetime.utcnow().year }} UPSC Current Affairs. All rights
+        reserved.
+      </p>
+    </footer>
+    <script src="{{ url_for('static', filename='CA.js') }}"></script>
+  </body>
+</html>

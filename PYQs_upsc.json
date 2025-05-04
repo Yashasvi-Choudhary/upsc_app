@@ -1,0 +1,71 @@
+{
+  "PRELIMS": {
+    "GENERAL STUDIES (GS)": {
+      "2024": "https://www.drishtiias.com/images/pdf/1718537625_upsc-pre-2024-GS-(B).pdf",
+      "2023": "https://www.drishtiias.com/images/pdf/UPSC%202023%20Questions%20English.pdf",
+      "2022": "https://www.drishtiias.com/images/pdf/GS%20Paper%202022%20(English)%20with%20logo.pdf",
+      "2021": "https://www.drishtiias.com/images/pdf/New%20doc%20Oct%2010,%202021%2011.35%20(English%20).pdf",
+      "2020": "https://www.drishtiias.com/images/pdf/UPSC_Prelims_Exam_2020_GS_Paper_I.pdf.pdf"
+    },
+    "CSAT": {
+      "2024": "https://www.drishtiias.com/images/pdf/1718559311_CSE-2024%20Prelims%20CSAT%20Paper%20(B).pdf",
+      "2023": "https://www.drishtiias.com/images/pdf/GENERAL_STUDIES_PAPER_II_CSAT_2023-1.pdf",
+      "2022": "https://www.drishtiias.com/images/pdf/CSAT%20GENERAL%20STUDIES%20PAPER%20II%202022.pdf",
+      "2021": "https://www.drishtiias.com/images/pdf/UPSC%20Prelims%20CSAT%202021%20Engilsh.pdf",
+      "2020": "https://www.drishtiias.com/images/pdf/Prelims%20Question%20Paper-II%202019.pdf"
+    }
+  },
+  "MAINS": {
+    "GS-I": {
+      "2024": "https://www.drishtiias.com/images/pdf/UPSC%20Mains%202024%20GS%20Paper%20I...pdf",
+      "2023": "https://www.drishtiias.com/images/pdf/02%20UPSC%20GS%20Mains%20Paper_Final.pdf",
+      "2022": "https://www.drishtiias.com/images/pdf/UPSC%20GS%20Mains%20Paper%20History%202022.pdf",
+      "2021": "https://www.drishtiias.com/images/pdf/GS%20Paper-I%20(English).pdf",
+      "2020": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper-I%20(2020).pdf"
+    },
+    "GS-II": {
+      "2024": "https://www.drishtiias.com/images/pdf/02%20UPSC%202024%20Paper-II.pdf",
+      "2023": "https://www.drishtiias.com/images/pdf/03%20UPSC%20GS%20Mains%20Paper_Final%20(Polity).pdf",
+      "2022": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper%20II%20(2022).pdf",
+      "2021": "https://www.drishtiias.com/images/pdf/Gs%20paper%202%20(2021).pdf",
+      "2020": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper-II%20(2020).pdf"
+    },
+    "GS-III": {
+      "2024": "https://www.drishtiias.com/images/pdf/03%20UPSC%202024%20Paper-III.pdf",
+      "2023": "https://www.drishtiias.com/images/pdf/04%20UPSC%20GS%20Mains%20Paper_Final%201.pdf",
+      "2022": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper%20III%20(2022).pdf",
+      "2021": "https://www.drishtiias.com/images/pdf/G.S%20Paper-III%20(2021).pdf",
+      "2020": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper-III%20(2020).pdf"
+    },
+    "GS-IV": {
+      "2024": "https://www.drishtiias.com/images/pdf/05%20UPSC%202024%20Paper-IV_Final%201.pdf",
+      "2023": "https://www.drishtiias.com/images/pdf/05%20UPSC%20GS%20Mains%20Paper_Final%202.pdf",
+      "2022": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper%20IV%20(2022).pdf",
+      "2021": "https://www.drishtiias.com/images/pdf/G.S%20Paper-4%20(2021).pdf",
+      "2020": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper-IV%20(2020).pdf"
+    },
+    "ESSAY": {
+      "2024": "https://www.drishtiias.com/images/pdf/UPSC%20Mains%202024%20Essay%20Paper...pdf",
+      "2023": "https://www.drishtiias.com/images/pdf/00%20UPSC%20GS%20Mains%20Paper%20Eassy%2015.09.2023.pdf",
+      "2022": "https://www.drishtiias.com/images/pdf/UPSC%20GS%20Mains%20Paper%20Eassy%202022.pdf",
+      "2021": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper%20Essay%20(2021).pdf",
+      "2020": "https://www.drishtiias.com/images/pdf/GS%20Mains%20Paper%20Essay%20(2020).pdf"
+    },
+    "QUALIFYING PAPERS": {
+      "HINDI": {
+        "2024": "https://www.sanskritiias.com/uploaded_files/pdf/Hindi_Compulsory.pdf",
+        "2023": "https://www.sanskritiias.com/uploaded_files/pdf/QP-CSM-23-HINDI-COMPULSORY-290923.pdf",
+        "2022": "https://www.sanskritiias.com/uploaded_files/pdf/QP-CSM-22-HINDI-Compl.pdf",
+        "2021": "https://www.sanskritiias.com/uploaded_files/pdf/Compalsory-Hindi-2021.pdf",
+        "2020": "https://www.sanskritiias.com/uploaded_files/exam-paper/mains/2020/compulsory-hindi-2020.pdf"
+      },
+      "ENGLISH": {
+        "2024": "https://www.sanskritiias.com/uploaded_files/pdf/English_Compulsory.pdf",
+        "2023": "https://www.sanskritiias.com/uploaded_files/pdf/QP-CSM-23-ENGLISH-COMPULSORY-290923.pdf",
+        "2022": "https://www.sanskritiias.com/uploaded_files/pdf/QP-CSM-22-ENGLISH-Compl.pdf",
+        "2021": "https://www.sanskritiias.com/uploaded_files/exam-paper/mains/2021/compulsory-English-2021.pdf",
+        "2020": "https://www.sanskritiias.com/uploaded_files/pdf/QP-CSM-23-ENGLISH-COMPULSORY-290923.pdf"
+      }
+    }
+  }
+}

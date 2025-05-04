@@ -1,29 +1,164 @@
+<!-- templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}UPSC Prep{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="{{ url_for('static', filename='js/pyq_script.js') }}"></script>
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <title>{% block title %}UPSC Aspirant{% endblock %}</title>
+
+    {% block styles %}{% endblock %}
   </head>
+
   <body class="bg-gray-100">
-    <nav class="bg-teal-600 p-4 text-white">
-      <div class="container mx-auto flex justify-between items-center">
-        <a href="/" class="text-xl font-semibold">UPSC Prep</a>
-        <div>
-          {% if 'user_id' in session %}
-          <a href="/dashboard" class="mr-4">Dashboard</a>
-          <a href="/logout" class="text-red-300">Logout</a>
-          {% else %}
-          <a href="/login" class="mr-4">Login</a>
-          <a href="/register" class="bg-white text-teal-600 px-3 py-1 rounded"
-            >Register</a
+    <!-- Top Navbar -->
+    <header
+      class="fixed top-0 w-full bg-blue-900 text-white flex items-center justify-between px-8 py-4 shadow z-50"
+    >
+      <div class="flex items-center space-x-8">
+        <img
+          src="https://img.icons8.com/ios-filled/50/ffffff/greek-pillar.png"
+          alt="Logo"
+          class="h-10 w-10"
+        />
+        <h1 class="text-4xl font-extrabold tracking-wide font-serif">
+          UPSC Aspirant
+        </h1>
+      </div>
+
+      <!-- Profile Button & Popup -->
+      <div class="relative">
+        <button
+          id="profileBtn"
+          class="text-white p-2 hover:bg-blue-800 rounded-full"
+        >
+          <img
+            src="https://img.icons8.com/ios-glyphs/30/ffffff/user--v1.png"
+            alt="User"
+            class="h-8 w-8"
+          />
+        </button>
+
+        <div
+          id="profilePanel"
+          class="hidden absolute right-0 mt-2 size-max bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4 text-sm"
+        >
+          <form
+            method="POST"
+            action="{{ url_for('update_profile') }}"
+            class="space-y-3"
           >
-          {% endif %}
+            <div class="text-sm text-gray-700">Logged in as :</div>
+
+            <!-- Username -->
+            <div class="font-semibold text-blue-800 text-xl">
+              <span id="usernameDisplay" class="cursor-pointer"
+                >{{ current_user.username }}</span
+              >
+              <input
+                type="text"
+                name="new_username"
+                id="newUsername"
+                class="hidden border border-gray-300 rounded px-3 py-1 text-gray-700"
+                value="{{ current_user.username }}"
+              />
+            </div>
+
+            <!-- Email -->
+            <div class="font-semibold text-blue-800 text-xl">
+              <span id="emailDisplay" class="cursor-pointer"
+                >{{ current_user.email }}</span
+              >
+              <input
+                type="email"
+                name="new_email"
+                id="newEmail"
+                class="hidden w-full border border-gray-300 rounded px-3 py-1 text-gray-700"
+                value="{{ current_user.email }}"
+              />
+            </div>
+
+            <!-- Update Button -->
+            <button
+              type="submit"
+              class="w-full bg-blue-600 text-white rounded py-1 hover:bg-blue-800"
+            >
+              Update
+            </button>
+          </form>
+
+          <div class="border-t mt-3 pt-3">
+            <a
+              href="/logout"
+              class="w-full block text-center text-red-600 hover:text-red-800 font-medium"
+              >Logout</a
+            >
+          </div>
         </div>
       </div>
-    </nav>
-    <div class="container mx-auto mt-6">{% block content %}{% endblock %}</div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="pt-36 pb-32 px-4">{% block content %}{% endblock %}</main>
+
+    <!-- Bottom Footer -->
+    <footer
+      class="fixed bottom-0 w-full bg-white/60 backdrop-blur shadow flex justify-around py-2 z-50"
+    >
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/ios-filled/24/home.png" />
+        <span class="text-xs">Home</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/ios-filled/24/search--v1.png" />
+        <span class="text-xs">Search</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/ios-filled/24/bookmark-ribbon.png" />
+        <span class="text-xs">Bookmark</span>
+      </div>
+      <div class="flex flex-col items-center">
+        <img src="https://img.icons8.com/ios-filled/24/settings.png" />
+        <span class="text-xs">Settings</span>
+      </div>
+    </footer>
+
+    <!-- Script -->
+    <script>
+      const btn = document.getElementById("profileBtn");
+      const panel = document.getElementById("profilePanel");
+      const usernameDisplay = document.getElementById("usernameDisplay");
+      const emailDisplay = document.getElementById("emailDisplay");
+      const newUsername = document.getElementById("newUsername");
+      const newEmail = document.getElementById("newEmail");
+
+      // Toggle profile panel
+      btn.addEventListener("click", () => panel.classList.toggle("hidden"));
+      document.addEventListener("click", (e) => {
+        if (!btn.contains(e.target) && !panel.contains(e.target)) {
+          panel.classList.add("hidden");
+        }
+      });
+
+      // Clicking on username span turns it into input
+      usernameDisplay.addEventListener("click", () => {
+        usernameDisplay.classList.add("hidden");
+        newUsername.classList.remove("hidden");
+        newUsername.focus();
+      });
+
+      // Clicking on email span turns it into input
+      emailDisplay.addEventListener("click", () => {
+        emailDisplay.classList.add("hidden");
+        newEmail.classList.remove("hidden");
+        newEmail.focus();
+      });
+    </script>
   </body>
 </html>

@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
+%} {% block content %}
+<div class="bg-gray-100 min-h-screen py-10">
+  <div class="container mx-auto px-6">
+    <!-- Back Button and Heading -->
+    <div class="relative mb-12 flex items-center justify-center">
+      <a
+        href="{{ url_for('pyq_papertype', exam_type=exam_type) }}"
+        class="w-12 h-12 bg-white text-red-500 hover:bg-red-200 rounded-full flex items-center justify-center shadow absolute left-0"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <h1 class="text-4xl font-extrabold text-black">
+        Previous Year Questions (PYQ)
+      </h1>
+    </div>
+
+    <!-- Sub Heading -->
+    <div class="mb-12 ml-16">
+      <h2 class="text-3xl font-bold text-black">
+        {{ exam_type }} - {{ paper_type }} - {% if item_type == 'language' %}
+        Select Language {% else %} Select Year {% endif %}
+      </h2>
+    </div>
+
+    <!-- Items in Grid -->
+    <div
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center"
+    >
+      {% for item in items %}
+      <a
+        href="{{ url_for('pyq_final', exam_type=exam_type, paper_type=paper_type, item=item) }}"
+      >
+        <div
+          class="w-36 h-32 border-2 border-red-300 bg-white rounded-2xl shadow-md flex items-center justify-center text-center cursor-pointer transition-all duration-300 hover:bg-red-400 hover:text-white hover:scale-105"
+        >
+          <h3 class="text-xl font-bold">{{ item }}</h3>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

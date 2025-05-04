@@ -1,479 +1,78 @@
-<!-- templates/index.html -->
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Current Affairs - UPSC Preparation</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <style>
-      .carousel-container {
-        scroll-behavior: smooth;
-      }
-      .carousel-item {
-        min-width: 100%;
-        transition: opacity 0.5s ease;
-      }
-      .news-card {
-        transition: transform 0.3s ease;
-      }
-      .news-card:hover {
-        transform: translateY(-5px);
-      }
-      /* Fix scrollbars on mobile */
-      .scrollbar-hide {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-      .scrollbar-hide::-webkit-scrollbar {
-        display: none;
-      }
-    </style>
-  </head>
-  <body class="bg-gray-100 font-sans">
-    <header class="bg-indigo-800 text-white shadow-md">
-      <div class="container mx-auto px-4 py-3">
-        <h1 class="text-2xl font-bold text-center">UPSC Current Affairs</h1>
-      </div>
-    </header>
+{% extends "base.html" %} {% block title %}Current Affairs - UPSC Aspirant{%
+endblock %} {% block content %}
+<header class="bg-orange-600 text-white py-4 px-6">
+  <h1 class="text-2xl font-bold">Current Affairs</h1>
+</header>
 
-    <!-- Category Navigation Bar -->
-    <nav class="bg-white shadow-md sticky top-0 z-10">
-      <div class="container mx-auto px-4 py-2">
-        <div class="flex flex-wrap items-center justify-between">
-          <!-- Categories -->
-          <div
-            class="flex items-center overflow-x-auto whitespace-nowrap py-2 w-full md:w-4/5 scrollbar-hide"
-          >
-            <a
-              href="#"
-              class="category-btn px-3 py-1 mx-1 rounded-md bg-indigo-600 text-white font-medium"
-              data-category="top"
-              >Top Headlines</a
-            >
-            {% for key, value in categories.items() %}
-            <a
-              href="#"
-              class="category-btn px-3 py-1 mx-1 rounded-md hover:bg-indigo-100 font-medium"
-              data-category="{{ key }}"
-              >{{ value }}</a
-            >
-            {% endfor %}
-          </div>
-
-          <!-- Search Bar -->
-          <div class="w-full md:w-1/5 mt-2 md:mt-0">
-            <div class="relative">
-              <input
-                type="text"
-                id="searchInput"
-                class="w-full px-4 py-1 border rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                placeholder="Search news..."
-              />
-              <button
-                id="searchBtn"
-                class="absolute right-0 top-0 mt-1 mr-3 text-indigo-500"
-              >
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-6">
-      <!-- Loading indicator -->
-      <div
-        id="loadingIndicator"
-        class="hidden flex justify-center items-center py-10"
+<!-- Categories and Search Bar -->
+<div class="py-6 px-6">
+  <div class="mb-4">
+    <label for="category" class="block text-lg font-semibold"
+      >Select News Category:</label
+    >
+    <div class="flex space-x-4 mt-2">
+      {% for key, value in categories.items() %}
+      <button
+        class="category-btn bg-orange-500 text-white py-2 px-4 rounded"
+        data-category="{{ key }}"
       >
-        <div
-          class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"
-        ></div>
-      </div>
+        {{ value }}
+      </button>
+      {% endfor %}
+    </div>
+  </div>
 
-      <!-- Headlines Carousel -->
-      <section class="mb-8">
-        <h2 class="text-xl font-bold mb-4">Top Headlines</h2>
-        <div class="relative">
-          <div
-            id="carousel"
-            class="carousel-container flex overflow-hidden rounded-lg bg-white shadow-lg"
-          >
-            <!-- Carousel items will be inserted here -->
-            <div
-              class="flex items-center justify-center w-full h-64 bg-gray-200"
-            >
-              <p class="text-gray-500">Loading headlines...</p>
-            </div>
-          </div>
-          <!-- Carousel Controls -->
-          <button
-            id="prevBtn"
-            class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 p-2 rounded-r-md"
-          >
-            <i class="fas fa-chevron-left text-indigo-700"></i>
-          </button>
-          <button
-            id="nextBtn"
-            class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-50 p-2 rounded-l-md"
-          >
-            <i class="fas fa-chevron-right text-indigo-700"></i>
-          </button>
-        </div>
-      </section>
+  <div class="mb-4">
+    <label for="searchInput" class="block text-lg font-semibold"
+      >Search News:</label
+    >
+    <input
+      type="text"
+      id="searchInput"
+      class="w-full px-4 py-2 border border-gray-300 rounded"
+      placeholder="Search..."
+    />
+  </div>
+</div>
 
-      <!-- Latest News -->
-      <section>
-        <div class="flex justify-between items-center mb-4">
-          <h2 id="newsHeading" class="text-xl font-bold">Latest News</h2>
-          <span
-            id="categoryIndicator"
-            class="text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded"
-            >All Categories</span
-          >
-        </div>
-        <div
-          id="newsContainer"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          <!-- News cards will be inserted here -->
-        </div>
-      </section>
-    </main>
+<!-- Top Headlines Carousel -->
+<div id="carousel" class="carousel mb-6">
+  <!-- Top Headlines will be dynamically loaded here -->
+</div>
 
-    <!-- Footer -->
-    <footer class="bg-indigo-800 text-white py-4 mt-8">
-      <div class="container mx-auto px-4 text-center">
-        <p>UPSC Current Affairs App &copy; 2025</p>
-      </div>
-    </footer>
+<!-- News Cards Section -->
+<div
+  id="newsContainer"
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-6"
+>
+  <!-- News cards will be dynamically loaded here -->
+</div>
 
-    <!-- JavaScript -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        // Global variables
-        let currentCategory = "top";
-        let currentCarouselIndex = 0;
-        let topHeadlines = [];
+<!-- Filters (Year, Month, Week) -->
+<div class="py-6 px-6">
+  <label for="yearFilter">Filter by Year:</label>
+  <select id="yearFilter" class="border p-2 mb-4">
+    <option value="">Select Year</option>
+    <option value="2025">2025</option>
+    <option value="2024">2024</option>
+  </select>
 
-        // Initialize page
-        fetchNews("top");
+  <label for="monthFilter">Filter by Month:</label>
+  <select id="monthFilter" class="border p-2 mb-4">
+    <option value="">Select Month</option>
+    <option value="01">January</option>
+    <option value="02">February</option>
+  </select>
 
-        // Event Listeners
-        document.querySelectorAll(".category-btn").forEach((btn) => {
-          btn.addEventListener("click", function (e) {
-            e.preventDefault();
-            const category = this.getAttribute("data-category");
-            setActiveCategory(category);
-            fetchNews(category);
-          });
-        });
+  <label for="weekFilter">Filter by Week:</label>
+  <select id="weekFilter" class="border p-2 mb-4">
+    <option value="">Select Week</option>
+    <option value="1">Week 1</option>
+    <option value="2">Week 2</option>
+  </select>
+</div>
 
-        document
-          .getElementById("searchBtn")
-          .addEventListener("click", performSearch);
-        document
-          .getElementById("searchInput")
-          .addEventListener("keypress", function (e) {
-            if (e.key === "Enter") {
-              performSearch();
-            }
-          });
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="CA.js"></script>
 
-        document
-          .getElementById("prevBtn")
-          .addEventListener("click", function () {
-            navigateCarousel(-1);
-          });
-
-        document
-          .getElementById("nextBtn")
-          .addEventListener("click", function () {
-            navigateCarousel(1);
-          });
-
-        // Functions
-        function setActiveCategory(category) {
-          currentCategory = category;
-
-          // Update UI
-          document.querySelectorAll(".category-btn").forEach((btn) => {
-            if (btn.getAttribute("data-category") === category) {
-              btn.classList.add("bg-indigo-600", "text-white");
-              btn.classList.remove("hover:bg-indigo-100");
-            } else {
-              btn.classList.remove("bg-indigo-600", "text-white");
-              btn.classList.add("hover:bg-indigo-100");
-            }
-          });
-
-          // Update category indicator
-          const categoryText =
-            category === "top"
-              ? "Top Headlines"
-              : document.querySelector(`[data-category="${category}"]`)
-                  .textContent;
-          document.getElementById("categoryIndicator").textContent =
-            categoryText;
-          document.getElementById("newsHeading").textContent =
-            category === "top" ? "Latest News" : `${categoryText} News`;
-        }
-
-        function fetchNews(category) {
-          showLoading(true);
-
-          fetch(`/news/${category}`)
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(
-                  "Network response was not ok: " + response.status
-                );
-              }
-              return response.json();
-            })
-            .then((data) => {
-              if (data.status === "ok") {
-                const articles = data.articles || [];
-
-                if (category === "top") {
-                  topHeadlines = articles.slice(0, 5);
-                  updateCarousel();
-
-                  // Also display articles below
-                  displayNewsCards(articles);
-                } else {
-                  displayNewsCards(articles);
-                }
-              } else {
-                showError(
-                  "Failed to load news: " + (data.message || "Unknown error")
-                );
-              }
-              showLoading(false);
-            })
-            .catch((error) => {
-              console.error("Fetch error:", error);
-              showError("Error: " + error.message);
-              showLoading(false);
-            });
-        }
-
-        function performSearch() {
-          const query = document.getElementById("searchInput").value.trim();
-          if (!query) return;
-
-          showLoading(true);
-
-          fetch(`/search?q=${encodeURIComponent(query)}`)
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(
-                  "Network response was not ok: " + response.status
-                );
-              }
-              return response.json();
-            })
-            .then((data) => {
-              if (data.status === "ok") {
-                const articles = data.articles || [];
-                displayNewsCards(articles);
-
-                // Update heading
-                document.getElementById(
-                  "newsHeading"
-                ).textContent = `Search Results: "${query}"`;
-                document.getElementById(
-                  "categoryIndicator"
-                ).textContent = `Found: ${articles.length}`;
-
-                // Reset category buttons
-                document.querySelectorAll(".category-btn").forEach((btn) => {
-                  btn.classList.remove("bg-indigo-600", "text-white");
-                  btn.classList.add("hover:bg-indigo-100");
-                });
-              } else {
-                showError(
-                  "Failed to search: " + (data.message || "Unknown error")
-                );
-              }
-              showLoading(false);
-            })
-            .catch((error) => {
-              console.error("Search error:", error);
-              showError("Error: " + error.message);
-              showLoading(false);
-            });
-        }
-
-        function updateCarousel() {
-          const carousel = document.getElementById("carousel");
-          carousel.innerHTML = "";
-
-          if (!topHeadlines || topHeadlines.length === 0) {
-            carousel.innerHTML = `
-      <div class="flex items-center justify-center w-full h-64 bg-gray-200">
-        <p class="text-gray-500">No headlines available</p>
-      </div>
-    `;
-            return;
-          }
-
-          console.log("Top Headlines:", topHeadlines);
-
-          topHeadlines.forEach((article, index) => {
-            // Use our own placeholder if no image is available
-            const imageUrl = article.urlToImage || `/api/placeholder/800/400`;
-            const isActive = index === currentCarouselIndex;
-
-            const slide = document.createElement("div");
-            slide.className = `carousel-item ${
-              isActive ? "block" : "hidden"
-            } relative w-full`;
-            slide.innerHTML = `
-      <div class="relative h-64 w-full">
-        <img src="${imageUrl}" alt="${
-              article.title || "News headline"
-            }" class="h-full w-full object-cover" onerror="this.src='/api/placeholder/800/400'">
-        <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 p-4">
-          <h3 class="text-white font-bold text-lg">${
-            article.title || "No title available"
-          }</h3>
-          <p class="text-white text-sm mt-1 line-clamp-2">${
-            article.description || "No description available"
-          }</p>
-        </div>
-      </div>
-    `;
-
-            // Add click event to go to news detail
-            slide.addEventListener("click", function () {
-              if (article.url) {
-                window.open(article.url, "_blank");
-              }
-            });
-
-            carousel.appendChild(slide);
-          });
-
-          // Auto slide every 5 seconds
-          clearTimeout(window.carouselTimer);
-          window.carouselTimer = setTimeout(() => {
-            navigateCarousel(1);
-          }, 5000);
-        }
-
-        function navigateCarousel(direction) {
-          if (topHeadlines.length === 0) return;
-
-          // Hide current slide
-          const slides = document.querySelectorAll(".carousel-item");
-          slides[currentCarouselIndex].classList.add("hidden");
-          slides[currentCarouselIndex].classList.remove("block");
-
-          // Update index
-          currentCarouselIndex =
-            (currentCarouselIndex + direction + topHeadlines.length) %
-            topHeadlines.length;
-
-          // Show new slide
-          slides[currentCarouselIndex].classList.remove("hidden");
-          slides[currentCarouselIndex].classList.add("block");
-
-          // Restart auto slide timer
-          clearTimeout(window.carouselTimer);
-          window.carouselTimer = setTimeout(() => {
-            navigateCarousel(1);
-          }, 5000);
-        }
-
-        function displayNewsCards(articles) {
-          const container = document.getElementById("newsContainer");
-          container.innerHTML = "";
-
-          if (articles.length === 0) {
-            container.innerHTML = `
-                        <div class="col-span-full text-center py-10">
-                            <p class="text-gray-500">No news articles found</p>
-                        </div>
-                    `;
-            return;
-          }
-
-          articles.forEach((article) => {
-            // Use our own placeholder if no image is available
-            const imageUrl = article.urlToImage || `/api/placeholder/400/200`;
-            const publishedDate = new Date(
-              article.publishedAt
-            ).toLocaleDateString();
-            const source = article.source?.name || "Unknown Source";
-
-            const card = document.createElement("div");
-            card.className =
-              "news-card bg-white rounded-lg shadow-md overflow-hidden";
-            card.innerHTML = `
-                        <img src="${imageUrl}" alt="${
-              article.title
-            }" class="w-full h-48 object-cover" onerror="this.src='/api/placeholder/400/200'">
-                        <div class="p-4">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs text-gray-500">${publishedDate}</span>
-                                <span class="text-xs font-medium text-indigo-600">${source}</span>
-                            </div>
-                            <h3 class="font-bold text-lg mb-2 line-clamp-2">${
-                              article.title
-                            }</h3>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">${
-                              article.description || "No description available"
-                            }</p>
-                            <a href="${
-                              article.url
-                            }" target="_blank" class="text-indigo-600 text-sm font-medium hover:underline">Read More</a>
-                        </div>
-                    `;
-
-            // Add click event to the entire card
-            card.addEventListener("click", function (e) {
-              // Don't trigger if clicking on the Read More link (it has its own target)
-              if (e.target.tagName !== "A") {
-                window.open(article.url, "_blank");
-              }
-            });
-
-            container.appendChild(card);
-          });
-        }
-
-        function showLoading(isLoading) {
-          const loader = document.getElementById("loadingIndicator");
-          if (isLoading) {
-            loader.classList.remove("hidden");
-          } else {
-            loader.classList.add("hidden");
-          }
-        }
-
-        function showError(message) {
-          const container = document.getElementById("newsContainer");
-          container.innerHTML = `
-                    <div class="col-span-full bg-red-100 text-red-700 p-4 rounded-md">
-                        <p>${message}</p>
-                        <p class="mt-2">Please check your API key and internet connection.</p>
-                    </div>
-                `;
-
-          // Also log to console for debugging
-          console.error("Error:", message);
-        }
-      });
-    </script>
-  </body>
-</html>
+{% endblock %}

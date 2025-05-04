@@ -16,5 +16,17 @@
       "title": "Polity",
       "link": "https://www.clearias.com/indian-polity/?srsltid=AfmBOooN1b9ydS7tFn29SwYi0wScc6xT_joMSmW59a4wPiDzb1lMlbh-"
     }
+  ],
+  "Economics": [
+    {
+      "title": "Economics",
+      "link": "https://www.clearias.com/economics-notes-upsc/"
+    }
+  ],
+  "Art & Culture": [
+    {
+      "title": "Art & Culture",
+      "link": "https://www.clearias.com/art-and-culture/"
+    }
   ]
 }

@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
+%} {% block content %}
+<div class="max-w-5xl mx-auto p-6">
+  <!-- Top Bar -->
+  <div class="flex items-center mb-8">
+    <!-- Back Button -->
+    <a
+      href="{{ url_for('subject_select', selected_class=selected_class) }}"
+      class="w-12 h-12 bg-white text-green-600 hover:bg-green-200 rounded-full flex items-center justify-center shadow transition-colors"
+      title="Back"
+    >
+      <i class="fas fa-arrow-left text-lg"></i>
+    </a>
+
+    <!-- Heading -->
+    <h1 class="text-2xl font-bold text-green-800 text-center flex-1 -ml-6">
+      📥 {{ subject|capitalize }} Book(s) - Class {{ selected_class }}
+    </h1>
+  </div>
+
+  {% if books %}
+  <!-- Book Parts Grid -->
+  <div class="flex flex-wrap justify-center gap-6 pt-16">
+    {% for key, link in books.items() %}
+    <div
+      class="flex flex-col items-center bg-white border border-green-200 rounded-xl p-6 shadow hover:bg-green-300 hover:shadow-md transition duration-200"
+    >
+      <!-- Icon -->
+      <div
+        class="w-48 h-32 bg-green-100 text-green-700 flex items-center justify-center rounded-full text-6xl mb-4 shadow-inner"
+      >
+        <i class="fas fa-file-download"></i>
+      </div>
+
+      <!-- Book Part Info -->
+      <div class="text-center text-green-800 font-semibold text-lg mb-2">
+        Part {{ key }}
+      </div>
+
+      <!-- Download Button -->
+      <a
+        href="{{ link }}"
+        target="_blank"
+        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+      >
+        Download
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-center text-red-500 mt-8">
+    No books available or redirected automatically.
+  </p>
+  {% endif %}
+</div>
+{% endblock %}
