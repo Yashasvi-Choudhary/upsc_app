@@ -3,7 +3,7 @@
 %} {% block content %}
 <div class="flex justify-center">
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-10">
-    <a href="#" class="block">
+    <!-- <a href="#" class="block">
       <div
         class="bg-teal-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
@@ -13,9 +13,9 @@
         />
         <p class="font-semibold text-base">AI Quiz Generator</p>
       </div>
-    </a>
+    </a> -->
 
-    <a href="{{ url_for('CA_index') }}" class="block">
+    <a href="{{ url_for('current_affairs') }}" class="block">
       <div
         class="bg-yellow-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
@@ -24,7 +24,7 @@
       </div>
     </a>
 
-    <a href="syllabus" class="block">
+    <a href="{{ url_for('syllabus_select_exam_type') }}" class="block">
       <div
         class="bg-blue-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
@@ -84,7 +84,7 @@
       </div>
     </a>
 
-    <a href="#" class="block">
+    <!-- <a href="#" class="block">
       <div
         class="bg-pink-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
@@ -94,7 +94,7 @@
         />
         <p class="font-semibold text-base">Answer Writing</p>
       </div>
-    </a>
+    </a> -->
 
     <a href="#" class="block">
       <div
@@ -108,7 +108,7 @@
       </div>
     </a>
 
-    <a href="#" class="block">
+    <!-- <a href="#" class="block">
       <div
         class="bg-purple-500 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
@@ -117,5 +117,7 @@
       </div>
     </a>
   </div>
+</div> -->
+    {% endblock %}
+  </div>
 </div>
-{% endblock %}

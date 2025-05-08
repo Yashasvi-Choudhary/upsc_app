@@ -1,0 +1,49 @@
+{% extends "base.html" %} {% block title %}Syllabus - Select Paper Type{%
+endblock %} {% block content %}
+
+<div class="bg-gray-100 min-h-screen py-10">
+  <div class="container mx-auto px-6">
+    <!-- Back Button and Heading -->
+    <div class="flex items-center justify-center relative mb-12">
+      <a
+        href="{{ url_for('syllabus_select_exam_type') }}"
+        class="w-12 h-12 bg-white text-blue-600 hover:bg-blue-200 rounded-full flex items-center justify-center shadow transition-colors absolute left-0"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-black">Select Paper Type</h1>
+        <p class="mt-2 text-lg font-medium text-gray-700">
+          {{ exam_type|title }} Exam
+        </p>
+      </div>
+    </div>
+
+    <!-- Subheading -->
+    <div class="mb-10 text-2xl font-semibold text-black text-center ml-12">
+      <h2 class="text-3xl font-bold text-black">Choose a Paper :</h2>
+    </div>
+
+    <!-- Paper Type Cards -->
+    <div class="flex flex-wrap justify-center gap-12">
+      {% if paper_types %} {% for paper in paper_types %}
+      <a
+        href="{{ url_for('syllabus_show_syllabus', exam_type=exam_type, paper_type=paper.paper_type) }}"
+      >
+        <div
+          class="w-72 h-40 border-2 border-blue-500 bg-white p-6 rounded-2xl shadow-md cursor-pointer text-center flex flex-col justify-center transition-all duration-300 hover:bg-blue-500 hover:text-white hover:scale-105"
+        >
+          <h3 class="text-2xl font-bold">{{ paper.paper_type|title }}</h3>
+        </div>
+      </a>
+      {% endfor %} {% else %}
+      <div class="text-center text-red-600 text-xl font-semibold">
+        No paper types available for this exam type.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

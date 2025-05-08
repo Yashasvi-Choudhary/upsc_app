@@ -6,8 +6,15 @@ import requests , json
 import openai
 import os
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
+from db_config import get_connection
+from werkzeug.utils import secure_filename
+from urllib.parse import urlparse
+import urllib.parse 
+from flask import send_file
+import calendar
+
 
 load_dotenv()
 
@@ -33,10 +40,12 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
+# Home
 @app.route('/')
 def home():
     return render_template('index.html')
 
+# Register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -59,13 +68,16 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        flash("Registration successful! Please log in.", "success")
-        return redirect(url_for('login'))
+        login_user(new_user)  # ✅ Auto-login after registration
+        flash("Registration successful! Redirecting to dashboard.", "success")
+        return redirect(url_for('dashboard'))
 
     return render_template('register.html')
 
+# Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -77,11 +89,13 @@ def login():
         flash("Invalid credentials", "danger")
     return render_template('login.html')
 
+# Dashboard
 @app.route('/dashboard')
 @login_required
 def dashboard():
     return render_template('dashboard.html')
 
+# Update profile
 @app.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
@@ -93,12 +107,129 @@ def update_profile():
     flash("Profile updated successfully!", "success")
     return redirect(url_for('dashboard'))
 
+# Logout
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
     flash("Logged out.", "info")
     return redirect(url_for('login'))
+
+
+
+
+
+
+@app.route('/syllabus')
+def syllabus_main():
+    """Main syllabus page that asks users to select an exam type"""
+    return render_template('syllabus_main.html')
+
+@app.route('/syllabus/select_exam_type')
+def syllabus_select_exam_type():
+    """Page to select exam type (prelims or mains)"""
+    return render_template('syllabus_select_exam_type.html')
+
+@app.route('/syllabus/select_paper_type')
+def syllabus_select_paper_type():
+    """Page to select paper type based on the selected exam type"""
+    exam_type = request.args.get('exam_type')
+    if not exam_type:
+        return redirect(url_for('syllabus_main'))
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    # Get unique paper types available for this exam type
+    query = """
+        SELECT DISTINCT paper_type 
+        FROM syllabus 
+        WHERE exam_type = %s
+    """
+    cursor.execute(query, (exam_type,))
+    paper_types = cursor.fetchall()
+    conn.close()
+    
+    return render_template('syllabus_select_paper_type.html', 
+                          exam_type=exam_type, 
+                          paper_types=paper_types)
+
+@app.route('/syllabus/show_syllabus')
+def syllabus_show_syllabus():
+    """Show available syllabi for the selected exam and paper type"""
+    exam_type = request.args.get('exam_type')
+    paper_type = request.args.get('paper_type')
+    
+    if not exam_type or not paper_type:
+        return redirect(url_for('syllabus_main'))
+    
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    query = """
+        SELECT id, exam_type, paper_type, year, link
+        FROM syllabus
+        WHERE exam_type = %s AND paper_type = %s
+        ORDER BY year DESC
+    """
+    cursor.execute(query, (exam_type, paper_type))
+    syllabi = cursor.fetchall()
+    conn.close()
+    
+    return render_template('syllabus_show_syllabus.html', 
+                          syllabi=syllabi, 
+                          exam_type=exam_type, 
+                          paper_type=paper_type)
+
+@app.route('/syllabus/access/<int:syllabus_id>')
+def access_syllabus(syllabus_id):
+    """Access the syllabus PDF file - either download it or redirect to URL"""
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    query = "SELECT link, exam_type, paper_type, year FROM syllabus WHERE id = %s"
+    cursor.execute(query, (syllabus_id,))
+    syllabus = cursor.fetchone()
+    conn.close()
+    
+    if not syllabus or not syllabus['link']:
+        return "Syllabus PDF not found", 404
+    
+    link = syllabus['link']
+    
+    # Check if it's a URL or a local file path
+    parsed_url = urlparse(link)
+    
+    # If it's a web URL (starts with http or https)
+    if parsed_url.scheme in ['http', 'https']:
+        # Redirect to the URL
+        return redirect(link)
+    
+    # If it's a local file path
+    elif parsed_url.scheme == 'file':
+        # Extract the file path
+        file_path = urllib.parse.unquote(parsed_url.path)
+        
+        # Remove leading slash in Windows paths
+        if os.name == 'nt' and file_path.startswith('/'):
+            file_path = file_path[1:]
+        
+        # Check if file exists
+        if not os.path.exists(file_path):
+            return "Local PDF file not found", 404
+        
+        # Create a descriptive filename for the download
+        filename = secure_filename(f"{syllabus['exam_type']}_{syllabus['paper_type']}_{syllabus['year']}.pdf")
+        
+        # Serve the file
+        return send_file(file_path,
+                        as_attachment=True,
+                        download_name=filename,
+                        mimetype='application/pdf')
+    
+    # If it's neither a URL nor a file path
+    else:
+        return "Invalid syllabus link format", 400
 
 
 
@@ -109,66 +240,208 @@ def logout():
 # NEWS_API_KEY = 'ca5b3974b4fe4f05a29125b28554c1f3'  # Replace with your NewsAPI key
 
 
-NEWS_API_KEY = os.getenv('ca5b3974b4fe4f05a29125b28554c1f3')
-NEWS_API_URL = 'https://newsapi.org/v2/top-headlines'
-CATEGORIES = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
-BOOKMARKS_FILE = 'bookmarks.json'
+# ✅ Direct API key assignment (instead of os.getenv)
+# NEWS_API_KEY = '231273fc510f4c319ee8e064eeefd15e'
+# NEWS_API_URL = 'https://newsapi.org/v2/top-headlines'
 
-def fetch_news(category=None, query=None):
-    params = {
-        'apiKey': NEWS_API_KEY,
-        'country': 'in',
-        'pageSize': 10
+
+# News API Configuration
+NEWS_API_KEY = '231273fc510f4c319ee8e064eeefd15e'
+NEWS_API_URL = 'https://newsapi.org/v2/everything'
+
+# Categories for navigation
+CATEGORIES = ['business', 'technology', 'sports', 'health', 'science', 'entertainment', 'politics']
+
+
+
+# Helper function to get current date ranges for compilations
+def get_date_ranges():
+    today = datetime.now()
+    
+    # Weekly (last 7 days)
+    start_of_week = today - timedelta(days=7)
+    
+    # Monthly (current month)
+    current_month = today.month
+    current_year = today.year
+    month_name = calendar.month_name[current_month]
+    
+    # Format dates for display
+    start_date = start_of_week.strftime('%d %b, %Y')
+    end_date = today.strftime('%d %b, %Y')
+    
+    return {
+        'start_date': start_date,
+        'end_date': end_date,
+        'month_name': month_name,
+        'year': current_year
     }
-    if category:
-        params['category'] = category
+
+# Helper function to fetch news
+def get_news(category=None, query=None):
+    # For top headlines (homepage and categories)
+    if not query and (not category or category == 'all'):
+        NEWS_API_ENDPOINT = f'{NEWS_API_URL}top-headlines'
+        params = {
+            'country': 'in',
+            'apiKey': NEWS_API_KEY,
+            'pageSize': 20
+        }
+    # For category-specific headlines
+    elif not query and category != 'all':
+        NEWS_API_ENDPOINT = f'{NEWS_API_URL}top-headlines'
+        params = {
+            'country': 'in',
+            'category': category,
+            'apiKey': NEWS_API_KEY,
+            'pageSize': 20
+        }
+    # For search or query based results
+    else:
+        NEWS_API_ENDPOINT = f'{NEWS_API_URL}everything'
+        params = {
+            'q': query if query else 'India',
+            'language': 'en',
+            'sortBy': 'publishedAt',
+            'apiKey': NEWS_API_KEY,
+            'pageSize': 20
+        }
+    
+    try:
+        response = requests.get(NEWS_API_ENDPOINT, params=params)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching news: {e}")
+        return {"status": "error", "articles": []}
+
+# Helper function to get news for compilation
+def get_compilation_news(period='weekly'):
+    compilation_data = {category: [] for category in CATEGORIES}
+    
+    today = datetime.now()
+    
+    # Set date range based on period
+    if period == 'weekly':
+        from_date = (today - timedelta(days=7)).strftime('%Y-%m-%d')
+    elif period == 'monthly':
+        from_date = datetime(today.year, today.month, 1).strftime('%Y-%m-%d')
+    else:  # yearly
+        from_date = datetime(today.year, 1, 1).strftime('%Y-%m-%d')
+    
+    to_date = today.strftime('%Y-%m-%d')
+    
+    # Fetch news for each category
+    for category in CATEGORIES:
+        NEWS_API_ENDPOINT = f'{NEWS_API_URL}everything'
+        params = {
+            'q': f'{category} AND (India OR UPSC OR IAS OR civil services)',
+            'from': from_date,
+            'to': to_date,
+            'language': 'en',
+            'sortBy': 'relevancy',
+            'apiKey': NEWS_API_KEY,
+            'pageSize': 10
+        }
+        
+        try:
+            response = requests.get(NEWS_API_ENDPOINT, params=params)
+            response.raise_for_status()
+            news_data = response.json()
+            
+            if news_data['status'] == 'ok':
+                # Add additional information for UPSC context
+                for article in news_data['articles']:
+                    # Add key points (placeholder - in a real app you might generate these)
+                    article['key_points'] = [
+                        f"Important point related to {category}",
+                        "Relevant UPSC context",
+                        "Policy implications"
+                    ]
+                
+                compilation_data[category] = news_data['articles']
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching compilation news for {category}: {e}")
+    
+    return compilation_data
+
+# ------------------ ROUTES ------------------
+
+
+
+@app.route('/current-affairs')
+def current_affairs():
+    category = request.args.get('category', 'all')
+    query = request.args.get('query')
+    
+    news_data = get_news(category, query)
+    
+    carousel_items = news_data.get('articles', [])[:5]
+    card_items = news_data.get('articles', [])[5:] if len(news_data.get('articles', [])) > 5 else []
+    
+    bookmarks = session.get('bookmarks', [])
+    
+    return render_template('current_affairs.html',
+                           carousel_items=carousel_items,
+                           card_items=card_items,
+                           categories=CATEGORIES,
+                           active_category=category,
+                           bookmarks=bookmarks)
+
+@app.route('/search')
+def search():
+    query = request.args.get('query', '')
     if query:
-        params['q'] = query
-    response = requests.get(NEWS_API_URL, params=params)
-    data = response.json()
-    return data.get('articles', [])
-
-def load_bookmarks():
-    if os.path.exists(BOOKMARKS_FILE):
-        with open(BOOKMARKS_FILE, 'r') as f:
-            return json.load(f)
-    return []
-
-def save_bookmark(article):
-    bookmarks = load_bookmarks()
-    if article not in bookmarks:
-        bookmarks.append(article)
-        with open(BOOKMARKS_FILE, 'w') as f:
-            json.dump(bookmarks, f)
-
-@app.route('/Current Affairs')
-def CA_index():
-    category = request.args.get('category')
-    query = request.args.get('q')
-    articles = fetch_news(category, query)
-    top_headlines = articles[:5]
-    latest_news = articles[5:]
-    return render_template('CA_index.html', categories=CATEGORIES, top_headlines=top_headlines, latest_news=latest_news , datetime=datetime)
+        return redirect(url_for('current_affairs', query=query))
+    return redirect(url_for('current_affairs'))
 
 @app.route('/bookmark', methods=['POST'])
 def bookmark():
-    article = request.form.to_dict()
-    save_bookmark(article)
-    return redirect(url_for('CA_index'))
+    article_data = request.json
+    bookmarks = session.get('bookmarks', [])
+    bookmarked_urls = [bookmark['url'] for bookmark in bookmarks]
+    
+    if article_data['url'] in bookmarked_urls:
+        bookmarks = [b for b in bookmarks if b['url'] != article_data['url']]
+        action = 'removed'
+    else:
+        article_data['bookmarked_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        bookmarks.append(article_data)
+        action = 'added'
+    
+    session['bookmarks'] = bookmarks
+    
+    return jsonify({'status': 'success', 'action': action, 'bookmark_count': len(bookmarks)})
 
-@app.route('/compilations/<period>')
-def compilations(period):
-    # Placeholder for compilation logic
-    # You can implement logic to fetch and display compilations based on the period
-    articles = fetch_news()
-    return render_template('CA_compilations.html', period=period.capitalize(), articles=articles , datetime=datetime)
+@app.route('/bookmarks')
+def view_bookmarks():
+    bookmarks = session.get('bookmarks', [])
+    return render_template('bookmarks.html',
+                           bookmarks=bookmarks,
+                           categories=CATEGORIES)
 
+@app.route('/clear-bookmarks', methods=['POST'])
+def clear_bookmarks():
+    session['bookmarks'] = []
+    return jsonify({'status': 'success'})
 
-
-
-
-
-
+@app.route('/current-affairs/compilation/<period>')
+def CA_compilation(period):
+    """Show weekly/monthly/yearly compilation page."""
+    if period not in ['weekly', 'monthly', 'yearly']:
+        period = 'weekly'
+    
+    # Get date ranges for display
+    date_ranges = get_date_ranges()
+    
+    # Get compilation data
+    compilation_data = get_compilation_news(period)
+    
+    return render_template('CA_compilation.html', 
+                          period=period,
+                          categories=CATEGORIES,
+                          compilation_data=compilation_data,
+                          **date_ranges)
 
 
 

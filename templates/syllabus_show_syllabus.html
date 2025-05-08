@@ -1,0 +1,85 @@
+{% extends "base.html" %} {% block title %}Syllabus - Available{% endblock %} {%
+block content %}
+
+<div class="bg-gray-100 min-h-screen py-10">
+  <div class="container mx-auto px-6">
+    <!-- Back Button and Heading -->
+    <div class="flex items-center justify-center relative mb-10">
+      <a
+        href="{{ url_for('syllabus_select_paper_type', exam_type=exam_type) }}"
+        class="w-12 h-12 bg-white text-blue-600 hover:bg-blue-200 rounded-full flex items-center justify-center shadow absolute left-0 transition-colors"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </a>
+
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-black">Available Syllabus</h1>
+        <p class="mt-2 text-lg font-medium text-gray-700">
+          {{ exam_type|title }} Exam - {{ paper_type|title }}
+        </p>
+      </div>
+    </div>
+
+    {% if syllabi %}
+    <div class="overflow-x-auto shadow-md rounded-lg bg-white p-6">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-blue-100 text-blue-700">
+          <tr>
+            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">
+              Exam Type
+            </th>
+            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">
+              Paper Type
+            </th>
+            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">
+              Year
+            </th>
+            <th class="px-6 py-3 text-left text-sm font-semibold uppercase">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for syllabus in syllabi %}
+          <tr class="hover:bg-blue-50">
+            <td class="px-6 py-4 text-gray-800">{{ syllabus.exam_type }}</td>
+            <td class="px-6 py-4 text-gray-800">{{ syllabus.paper_type }}</td>
+            <td class="px-6 py-4 text-gray-800">{{ syllabus.year }}</td>
+            <td class="px-6 py-4">
+              <a
+                href="{{ url_for('access_syllabus', syllabus_id=syllabus.id) }}"
+                class="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded-md transition"
+              >
+                <i class="fas fa-file-pdf mr-2"></i> Access PDF
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="bg-white p-6 rounded-lg shadow text-center text-gray-700 mt-6">
+      No syllabi found for this exam and paper type. Please check back later.
+    </div>
+    {% endif %}
+
+    <!-- Back Buttons -->
+    <div class="mt-10 text-center flex justify-center gap-6">
+      <a
+        href="{{ url_for('syllabus_select_paper_type', exam_type=exam_type) }}"
+        class="px-5 py-2 border border-gray-400 rounded-lg hover:bg-gray-200 text-gray-700 transition"
+      >
+        Back to Syllabus Selection
+      </a>
+      <a
+        href="{{ url_for('syllabus_select_exam_type') }}"
+        class="px-5 py-2 border border-blue-500 text-blue-600 hover:bg-blue-100 rounded-lg transition"
+      >
+        Choose Different Exam
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
