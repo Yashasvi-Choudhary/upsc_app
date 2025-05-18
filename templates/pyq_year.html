@@ -19,23 +19,22 @@
     <!-- Sub Heading -->
     <div class="mb-16 text-2xl font-semibold text-black text-center ml-12">
       <h2 class="text-3xl font-bold text-black">
-        {{ exam_type }} - {{ paper_type }} - {% if item_type == 'language' %}
-        Select Language {% else %} Select Year {% endif %}
+        {{ exam_type }} - {{ paper_type }} - Select Year
       </h2>
     </div>
 
     <!-- Items in Grid -->
     <div
-      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 justify-center"
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-1 justify-center"
     >
-      {% for item in items %}
+      {% for year in years %}
       <a
-        href="{{ url_for('pyq_final', exam_type=exam_type, paper_type=paper_type, item=item) }}"
+        href="{{ url_for('pyq_final', exam_type=exam_type, paper_type=paper_type, year=year) }}"
       >
         <div
-          class="w-36 h-32 border-2 border-red-400 bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center flex items-center justify-center transition-all duration-300 hover:bg-red-400 hover:text-white hover:scale-105"
+          class="w-48 h-40 border-2 border-red-400 bg-white p-4 rounded-2xl shadow-md cursor-pointer text-center flex items-center justify-center transition-all duration-300 hover:bg-red-400 hover:text-white hover:scale-105"
         >
-          <h3 class="text-lg font-bold">{{ item }}</h3>
+          <h3 class="text-lg font-bold">{{ year }}</h3>
         </div>
       </a>
       {% endfor %}

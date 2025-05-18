@@ -1,0 +1,43 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="flex items-center justify-center relative">
+  <a
+    href="{{ url_for('interview_index') }}"
+    class="w-12 h-12 bg-white text-orange-600 hover:bg-orange-200 rounded-full flex items-center justify-center shadow transition-colors absolute left-20"
+  >
+    <i class="fas fa-arrow-left"></i>
+  </a>
+</div>
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+  {% for category, vids in videos.items() %}
+  <div class="mb-10">
+    <h2 class="text-2xl font-semibold text-orange-600 mb-4 border-b pb-1">
+      {{ category.replace('_', ' ') }}
+    </h2>
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+    >
+      {% for vid in vids %}
+      <a
+        href="{{ vid.url }}"
+        target="_blank"
+        class="transform transition duration-300 hover:scale-105 hover:shadow-xl bg-white rounded-xl overflow-hidden shadow-md"
+      >
+        <img
+          src="{{ vid.thumbnail }}"
+          alt="{{ vid.title }}"
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-4">
+          <h3 class="text-sm font-medium text-gray-900 hover:text-orange-600">
+            {{ vid.title }}
+          </h3>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

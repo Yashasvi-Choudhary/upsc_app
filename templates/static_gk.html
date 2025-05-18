@@ -1,17 +1,33 @@
 {% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
 %} {% block styles %}
-
 <style>
   .topic-card {
+    width: 30vw; /* keep width similar */
+    max-width: 280px;
+    min-width: 220px;
+    height: calc(30vw * 0.65); /* height = 65% of width */
+    max-height: 180px; /* limit max height */
+    min-height: 140px; /* limit min height */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 240px;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin: 0 auto;
   }
   .topic-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+  .topic-icon {
+    font-size: 3rem;
+    margin-bottom: 0.6rem;
+  }
+  .topic-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
   }
 </style>
 
@@ -30,19 +46,17 @@
   </div>
 
   <!-- Topics Grid -->
-  <div
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6"
-  >
+  <div class="grid grid-cols-3 gap-6 justify-center">
     {% for topic in topics %}
     <div
-      class="topic-card bg-white rounded-xl shadow-md overflow-hidden cursor-pointer"
+      class="topic-card bg-white rounded-xl shadow-md overflow-hidden"
       onclick="openTopicLink('{{ topic.link }}')"
     >
       <div
-        class="bg-white text-indigo-900 hover:bg-indigo-300 border-2 rounded-xl border-indigo-300 p-6 text-center flex flex-col items-center justify-center h-full"
+        class="bg-white text-indigo-900 hover:bg-indigo-300 border-2 rounded-xl border-indigo-300 p-5 flex flex-col items-center justify-center h-full"
       >
-        <i class="fas {{ topic.icon }}  text-5xl mb-4"></i>
-        <h3 class="font-bold text-xl tracking-wide">{{ topic.name }}</h3>
+        <i class="fas {{ topic.icon }} topic-icon"></i>
+        <h3 class="topic-title">{{ topic.name }}</h3>
       </div>
     </div>
     {% endfor %}

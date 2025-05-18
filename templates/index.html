@@ -6,6 +6,7 @@
     <title>UPSC Aspirant App</title>
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="https://cdn.jsdelivr.net/npm/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
@@ -82,7 +83,7 @@
     </style>
   </head>
   <body
-    class="bg-gradient-to-r from-purple-700 via-pink-500 to-red-400 text-white font-sans"
+    class="bg-gradient-to-r from-purple-700 via-pink-500 to-red-400 font-sans"
   >
     <!-- Header -->
     <header
@@ -91,7 +92,7 @@
       <div
         class="flex items-center space-x-3 text-2xl font-extrabold tracking-tight"
       >
-        <img src="/static/UPSC_logo.jpg" alt="UPSC Logo" class="h-12 w-auto" />
+        <img src="/static/UPSC_logo.jpg" alt="UPSC Logo" class="h-10 w-auto" />
         <span>UPSC Aspirant</span>
       </div>
       <nav class="space-x-6 text-lg font-medium">
@@ -115,7 +116,7 @@
 
     <!-- Hero Section with Animation -->
     <section
-      class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-24"
+      class="min-h-screen flex flex-col justify-center items-center text-center px-6 pt-24 text-white"
     >
       <lottie-player
         src="https://assets2.lottiefiles.com/packages/lf20_jcikwtux.json"
@@ -129,10 +130,12 @@
         "Step by Step, Beat the Test — With UPSC Aspirant, Be Your Best!"
       </h1>
       <p class="text-xl max-w-3xl">
-        Your personal guide for one of India’s toughest exams — powered by smart
-        tools and proven strategies.
+        Your personal guide for one of India’s toughest exams —<span
+          class="font-extrabold text-yellow-300"
+          >Union Public Service Commission (UPSC)</span
+        >
       </p>
-      <div class="mt-6 space-x-4">
+      <div class="mt-16 space-x-4">
         <a
           href="/register"
           class="bg-black px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition"

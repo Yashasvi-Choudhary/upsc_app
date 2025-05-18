@@ -1,0 +1,140 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-6xl mx-auto px-4 py-12 text-gray-800">
+  <!-- Header Section -->
+  <div class="flex items-center justify-center mb-8">
+    <!-- Back Button -->
+    <a
+      href="/interview_index"
+      class="flex items-center justify-center w-12 h-12 rounded-full border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white transition duration-300 mr-6"
+      title="Back to Dashboard"
+    >
+      <i class="fas fa-arrow-left text-xl"></i>
+    </a>
+    <!-- Heading -->
+    <h1 class="text-4xl font-bold text-orange-600 text-center">
+      UPSC Interview Preparation: Overview
+    </h1>
+  </div>
+
+  <!-- Why UPSC Interview is Important -->
+  <section class="mb-12 bg-orange-50 p-8 rounded-2xl shadow-xl">
+    <h2 class="text-3xl font-semibold text-orange-500 mb-6">
+      🎯 Why is the UPSC Interview Important?
+    </h2>
+    <ul class="list-disc pl-8 text-gray-700 space-y-3">
+      <li>
+        It carries 275 marks and can significantly influence your final rank.
+      </li>
+      <li>Focuses on personality traits rather than academic knowledge.</li>
+      <li>Tests your leadership, presence of mind, ethics, and integrity.</li>
+    </ul>
+  </section>
+
+  <!-- What Happens in the Interview -->
+  <section class="mb-12 bg-orange-50 p-8 rounded-2xl shadow-xl">
+    <h2 class="text-3xl font-semibold text-orange-500 mb-6">
+      👥 What Happens in the Interview?
+    </h2>
+    <ul class="list-disc pl-8 text-gray-700 space-y-3">
+      <li>Held at UPSC Bhavan, New Delhi, lasting 30–45 minutes.</li>
+      <li>Panel includes 5 experts from various backgrounds.</li>
+      <li>
+        Questions are based on your DAF, hobbies, opinions, and current affairs.
+      </li>
+    </ul>
+  </section>
+
+  <!-- Key Qualities UPSC Looks For -->
+  <section class="mb-12 bg-orange-50 p-8 rounded-2xl shadow-xl">
+    <h2 class="text-3xl font-semibold text-orange-500 mb-6">
+      ✅ Key Qualities UPSC Looks For
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
+      <div>✔️ Clarity of thought and expression</div>
+      <div>✔️ Balanced and mature judgment</div>
+      <div>✔️ Integrity and honesty</div>
+      <div>✔️ Social awareness and empathy</div>
+      <div>✔️ Confidence and calmness under pressure</div>
+      <div>✔️ Leadership and teamwork ability</div>
+    </div>
+  </section>
+
+  <!-- Common Myths Busted -->
+  <section class="mb-12 bg-orange-50 p-8 rounded-2xl shadow-xl">
+    <h2 class="text-3xl font-semibold text-orange-500 mb-6">
+      ❌ Common Myths Busted
+    </h2>
+    <ul class="list-disc pl-8 text-gray-700 space-y-3">
+      <li>
+        <strong>Myth:</strong> Fluency in English is a must. <br /><strong
+          >Truth:</strong
+        >
+        You may choose any scheduled language.
+      </li>
+      <li>
+        <strong>Myth:</strong> The board will try to trick or intimidate you.
+        <br /><strong>Truth:</strong> They're professional and fair.
+      </li>
+      <li>
+        <strong>Myth:</strong> You need to have all answers. <br /><strong
+          >Truth:</strong
+        >
+        It’s okay to say “I don’t know.”
+      </li>
+    </ul>
+  </section>
+
+  <!-- Before You Face the Panel -->
+  <section class="mb-12 bg-orange-50 p-8 rounded-2xl shadow-xl">
+    <h2 class="text-3xl font-semibold text-orange-500 mb-6">
+      📋 Before You Face the Panel
+    </h2>
+    <ul class="list-disc pl-8 text-gray-700 space-y-3">
+      <li>Know your DAF inside-out and anticipate questions from it.</li>
+      <li>Stay updated on national and international current affairs.</li>
+      <li>Practice multiple mock interviews with experts.</li>
+      <li>Focus on grooming, posture, and voice modulation.</li>
+    </ul>
+  </section>
+
+  <!-- Tips for Interview Preparation -->
+  <section class="mb-12 bg-orange-50 p-8 rounded-2xl shadow-xl">
+    <h2 class="text-3xl font-semibold text-orange-500 mb-6">
+      💡 Tips for Interview Preparation
+    </h2>
+    <ul class="list-disc pl-8 text-gray-700 space-y-3">
+      <li>Be honest and self-aware — fake confidence is easy to spot.</li>
+      <li>Answer concisely; avoid rambling or overly technical jargon.</li>
+      <li>Maintain good eye contact and sit upright during the interview.</li>
+      <li>
+        Stay calm even if a question challenges your views — it’s a test of
+        composure.
+      </li>
+      <li>Record and review your mock interviews for improvement.</li>
+      <li>Read your DAF multiple times and underline keywords.</li>
+    </ul>
+  </section>
+
+  <!-- How Our Platform Helps -->
+  <section class="mb-12 bg-orange-50 p-8 rounded-2xl shadow-xl">
+    <h2 class="text-3xl font-semibold text-orange-500 mb-6">
+      🌟 How Our Platform Supports You
+    </h2>
+    <ul class="list-disc pl-8 text-gray-700 space-y-3">
+      <li>Video guidance from toppers and former UPSC board members.</li>
+      <li>DAF analysis tool to identify potential questions.</li>
+      <li>FAQ section to clarify all interview-related doubts.</li>
+    </ul>
+  </section>
+
+  <!-- Call to Action -->
+  <div class="text-center mt-12">
+    <a
+      href="{{ url_for('interview_videos') }}"
+      class="inline-block bg-orange-500 hover:bg-orange-600 text-white px-10 py-4 rounded-full font-semibold shadow-xl transition duration-300"
+    >
+      🎥 Start with Expert Videos →
+    </a>
+  </div>
+</div>
+{% endblock %}

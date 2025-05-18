@@ -10,35 +10,36 @@
       >
         <i class="fas fa-arrow-left"></i>
       </a>
-
-      <h1 class="text-4xl font-extrabold text-black">
+      <h1 class="text-4xl font-extrabold text-black text-center">
         Previous Year Questions (PYQ)
       </h1>
     </div>
 
     <!-- Sub Heading -->
-    <div class="mb-12 ml-16">
-      <h2 class="text-3xl font-bold text-black">
+    <div class="mb-12 text-2xl font-semibold text-black text-center">
+      <h2 class="text-3xl font-bold">
         {{ exam_type }} - {{ paper_type }} - {% if item_type == 'language' %}
         Select Language {% else %} Select Year {% endif %}
       </h2>
     </div>
 
-    <!-- Items in Grid -->
+    <!-- Selection Grid -->
     <div
-      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center"
+      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center"
     >
       {% for item in items %}
-      <a
-        href="{{ url_for('pyq_final', exam_type=exam_type, paper_type=paper_type, item=item) }}"
-      >
-        <div
-          class="w-36 h-32 border-2 border-red-300 bg-white rounded-2xl shadow-md flex items-center justify-center text-center cursor-pointer transition-all duration-300 hover:bg-red-400 hover:text-white hover:scale-105"
-        >
-          <h3 class="text-xl font-bold">{{ item }}</h3>
-        </div>
-      </a>
-      {% endfor %}
+  {% if item_type == 'language' %}
+    <a href="{{ url_for('pyq_subpaper_year', exam_type=exam_type, paper_type=paper_type, sub_paper_type=item) }}">
+  {% else %}
+    <a href="{{ url_for('pyq_final', exam_type=exam_type, paper_type=paper_type, sub_paper_type=sub_paper_type, year=item) }}">
+  {% endif %}
+    <div
+      class="w-36 h-32 border-2 border-red-300 bg-white rounded-2xl shadow-md flex items-center justify-center text-center cursor-pointer transition-all duration-300 hover:bg-red-400 hover:text-white hover:scale-105"
+    >
+      <h3 class="text-xl font-bold">{{ item }}</h3>
+    </div>
+  </a>
+{% endfor %}
     </div>
   </div>
 </div>

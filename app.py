@@ -1,19 +1,18 @@
-from flask import Flask, flash, render_template, request, redirect, session, url_for , jsonify , Response
+from flask import Flask, flash, render_template, request, redirect, session, url_for , jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests , json 
-import openai
 import os
 import random
-from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from db_config import get_connection
 from werkzeug.utils import secure_filename
 from urllib.parse import urlparse
 import urllib.parse 
 from flask import send_file
-import calendar
+import json ,  mysql.connector 
+from datetime import datetime, timedelta
 
 
 load_dotenv()
@@ -45,7 +44,8 @@ def load_user(user_id):
 def home():
     return render_template('index.html')
 
-# Register
+
+# Register Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -54,66 +54,75 @@ def register():
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
+        # Password mismatch check
         if password != confirm_password:
             flash("Passwords do not match.", "danger")
             return redirect(url_for('register'))
 
+        # Check if user already exists
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash("Email already registered.", "warning")
             return redirect(url_for('register'))
 
+        # Create new user
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, email=email, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
-        login_user(new_user)  # ✅ Auto-login after registration
+        # Auto-login after registration
+        login_user(new_user)
         flash("Registration successful! Redirecting to dashboard.", "success")
         return redirect(url_for('dashboard'))
 
     return render_template('register.html')
 
-# Login
+# Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
             login_user(user)
             flash("Logged in successfully.", "success")
             return redirect(url_for('dashboard'))
-        flash("Invalid credentials", "danger")
-    return render_template('login.html')
 
-# Dashboard
+        flash("Invalid credentials", "danger")
+    return render_template('login.html')  # Make sure autocomplete="off" is used in the HTML form
+
+# Dashboard Route
 @app.route('/dashboard')
 @login_required
 def dashboard():
     return render_template('dashboard.html')
 
-# Update profile
+# Update Profile Route
 @app.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
     new_username = request.form['new_username']
     new_email = request.form['new_email']
+
     current_user.username = new_username
     current_user.email = new_email
     db.session.commit()
+
     flash("Profile updated successfully!", "success")
     return redirect(url_for('dashboard'))
 
-# Logout
+# Logout Route
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()
     flash("Logged out.", "info")
     return redirect(url_for('login'))
+
+
 
 
 
@@ -245,203 +254,93 @@ def access_syllabus(syllabus_id):
 # NEWS_API_URL = 'https://newsapi.org/v2/top-headlines'
 
 
-# News API Configuration
-NEWS_API_KEY = '231273fc510f4c319ee8e064eeefd15e'
-NEWS_API_URL = 'https://newsapi.org/v2/everything'
-
-# Categories for navigation
-CATEGORIES = ['business', 'technology', 'sports', 'health', 'science', 'entertainment', 'politics']
 
 
 
-# Helper function to get current date ranges for compilations
-def get_date_ranges():
-    today = datetime.now()
-    
-    # Weekly (last 7 days)
-    start_of_week = today - timedelta(days=7)
-    
-    # Monthly (current month)
-    current_month = today.month
-    current_year = today.year
-    month_name = calendar.month_name[current_month]
-    
-    # Format dates for display
-    start_date = start_of_week.strftime('%d %b, %Y')
-    end_date = today.strftime('%d %b, %Y')
-    
-    return {
-        'start_date': start_date,
-        'end_date': end_date,
-        'month_name': month_name,
-        'year': current_year
-    }
+API_KEY = '231273fc510f4c319ee8e064eeefd15e'
+BASE_URL = 'https://newsapi.org/v2'
 
-# Helper function to fetch news
-def get_news(category=None, query=None):
-    # For top headlines (homepage and categories)
-    if not query and (not category or category == 'all'):
-        NEWS_API_ENDPOINT = f'{NEWS_API_URL}top-headlines'
-        params = {
-            'country': 'in',
-            'apiKey': NEWS_API_KEY,
-            'pageSize': 20
-        }
-    # For category-specific headlines
-    elif not query and category != 'all':
-        NEWS_API_ENDPOINT = f'{NEWS_API_URL}top-headlines'
-        params = {
-            'country': 'in',
-            'category': category,
-            'apiKey': NEWS_API_KEY,
-            'pageSize': 20
-        }
-    # For search or query based results
-    else:
-        NEWS_API_ENDPOINT = f'{NEWS_API_URL}everything'
-        params = {
-            'q': query if query else 'India',
-            'language': 'en',
-            'sortBy': 'publishedAt',
-            'apiKey': NEWS_API_KEY,
-            'pageSize': 20
-        }
-    
+bookmarks = []
+categories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
+regions = {'india': 'in', 'world': 'us'}
+
+def get_news(endpoint, params, limit=12):
+    """Generic function to fetch news with fallback and filtering"""
     try:
-        response = requests.get(NEWS_API_ENDPOINT, params=params)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        print(f"Error fetching news: {e}")
-        return {"status": "error", "articles": []}
+        response = requests.get(f"{BASE_URL}/{endpoint}", params=params, timeout=5)
+        if response.status_code != 200:
+            print("API Error:", response.json().get('message'))
+            return []
+        articles = response.json().get('articles', [])
+        return sorted(articles, key=lambda x: x.get('urlToImage') is not None, reverse=True)[:limit]
+    except Exception as e:
+        print("Fetch failed:", str(e))
+        return []
 
-# Helper function to get news for compilation
-def get_compilation_news(period='weekly'):
-    compilation_data = {category: [] for category in CATEGORIES}
-    
-    today = datetime.now()
-    
-    # Set date range based on period
-    if period == 'weekly':
-        from_date = (today - timedelta(days=7)).strftime('%Y-%m-%d')
-    elif period == 'monthly':
-        from_date = datetime(today.year, today.month, 1).strftime('%Y-%m-%d')
-    else:  # yearly
-        from_date = datetime(today.year, 1, 1).strftime('%Y-%m-%d')
-    
-    to_date = today.strftime('%Y-%m-%d')
-    
-    # Fetch news for each category
-    for category in CATEGORIES:
-        NEWS_API_ENDPOINT = f'{NEWS_API_URL}everything'
-        params = {
-            'q': f'{category} AND (India OR UPSC OR IAS OR civil services)',
-            'from': from_date,
-            'to': to_date,
-            'language': 'en',
-            'sortBy': 'relevancy',
-            'apiKey': NEWS_API_KEY,
-            'pageSize': 10
-        }
-        
-        try:
-            response = requests.get(NEWS_API_ENDPOINT, params=params)
-            response.raise_for_status()
-            news_data = response.json()
-            
-            if news_data['status'] == 'ok':
-                # Add additional information for UPSC context
-                for article in news_data['articles']:
-                    # Add key points (placeholder - in a real app you might generate these)
-                    article['key_points'] = [
-                        f"Important point related to {category}",
-                        "Relevant UPSC context",
-                        "Policy implications"
-                    ]
-                
-                compilation_data[category] = news_data['articles']
-        except requests.exceptions.RequestException as e:
-            print(f"Error fetching compilation news for {category}: {e}")
-    
-    return compilation_data
+def get_top_headlines(category='general', country='in', limit=12):
+    """Get top headlines for a category & country"""
+    params = {'apiKey': API_KEY, 'pageSize': limit, 'country': country}
+    if category and category != 'general':
+        params['category'] = category
+    return get_news('top-headlines', params, limit)
 
-# ------------------ ROUTES ------------------
-
-
-
-@app.route('/current-affairs')
+@app.route('/current_affairs')
 def current_affairs():
-    category = request.args.get('category', 'all')
-    query = request.args.get('query')
-    
-    news_data = get_news(category, query)
-    
-    carousel_items = news_data.get('articles', [])[:5]
-    card_items = news_data.get('articles', [])[5:] if len(news_data.get('articles', [])) > 5 else []
-    
-    bookmarks = session.get('bookmarks', [])
-    
-    return render_template('current_affairs.html',
-                           carousel_items=carousel_items,
-                           card_items=card_items,
-                           categories=CATEGORIES,
-                           active_category=category,
-                           bookmarks=bookmarks)
+    return redirect(url_for('news_view', region='india', category='general'))
 
-@app.route('/search')
-def search():
-    query = request.args.get('query', '')
-    if query:
-        return redirect(url_for('current_affairs', query=query))
-    return redirect(url_for('current_affairs'))
+@app.route('/<region>/', defaults={'category': 'general'})
+@app.route('/<region>/<category>')
+def news_view(region, category):
+    """Unified route for region + category news"""
+    if region not in regions or category not in categories:
+        return redirect(url_for('news_view', region='india', category='general'))
+
+    country_code = regions[region]
+    top_headlines = get_top_headlines(category, country_code, limit=5)
+    news_data = get_top_headlines(category, country_code, limit=12)
+
+    return render_template(
+        'CA_index.html',
+        categories=categories,
+        selected_category=category,
+        selected_region=region,
+        top_headlines=top_headlines,
+        news_data=news_data
+    )
 
 @app.route('/bookmark', methods=['POST'])
 def bookmark():
-    article_data = request.json
-    bookmarks = session.get('bookmarks', [])
-    bookmarked_urls = [bookmark['url'] for bookmark in bookmarks]
-    
-    if article_data['url'] in bookmarked_urls:
-        bookmarks = [b for b in bookmarks if b['url'] != article_data['url']]
-        action = 'removed'
-    else:
-        article_data['bookmarked_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        bookmarks.append(article_data)
-        action = 'added'
-    
-    session['bookmarks'] = bookmarks
-    
-    return jsonify({'status': 'success', 'action': action, 'bookmark_count': len(bookmarks)})
+    article = {
+        'title': request.form['title'],
+        'url': request.form['url'],
+        'image': request.form.get('image', ''),
+        'description': request.form.get('description', ''),
+        'date_added': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    }
+    if not any(b['url'] == article['url'] for b in bookmarks):
+        bookmarks.append(article)
+    return redirect(request.referrer or url_for('current_affairs'))
 
 @app.route('/bookmarks')
-def view_bookmarks():
-    bookmarks = session.get('bookmarks', [])
-    return render_template('bookmarks.html',
-                           bookmarks=bookmarks,
-                           categories=CATEGORIES)
+def show_bookmarks():
+    return render_template('CA_bookmarks.html', bookmarks=bookmarks)
 
-@app.route('/clear-bookmarks', methods=['POST'])
-def clear_bookmarks():
-    session['bookmarks'] = []
-    return jsonify({'status': 'success'})
+@app.route('/remove_bookmark', methods=['POST'])
+def remove_bookmark():
+    global bookmarks
+    url = request.form['url']
+    bookmarks = [b for b in bookmarks if b['url'] != url]
+    return redirect(url_for('show_bookmarks'))
 
-@app.route('/current-affairs/compilation/<period>')
-def CA_compilation(period):
-    """Show weekly/monthly/yearly compilation page."""
-    if period not in ['weekly', 'monthly', 'yearly']:
-        period = 'weekly'
-    
-    # Get date ranges for display
-    date_ranges = get_date_ranges()
-    
-    # Get compilation data
-    compilation_data = get_compilation_news(period)
-    
-    return render_template('CA_compilation.html', 
-                          period=period,
-                          categories=CATEGORIES,
-                          compilation_data=compilation_data,
-                          **date_ranges)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -540,127 +439,124 @@ def book_select(selected_class, subject):
 
 
 
-JSON_DATA_PATH = 'PYQs_upsc.json' 
 
-# Load data from JSON file
-def load_pyq_data():
-    with open(JSON_DATA_PATH, 'r') as file:
-        return json.load(file)
+# Database configuration
+db_config = {
+    'host': 'localhost',
+    'user': 'root',
+    'password': 'harharmahadev',
+    'database': 'upsc_app'
+}
 
-@app.route('/pyq')
+def get_db_connection():
+    return mysql.connector.connect(**db_config)
+
+# 1. Select Exam Type
+@app.route('/pyq_examtype')
 def pyq_examtype():
-    """PYQ first page showing exam types (PRELIMS/MAINS)"""
-    exam_types = list(load_pyq_data().keys())
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT DISTINCT exam_type FROM upsc_papers")
+    exam_types = [row[0] for row in cursor.fetchall()]
+    conn.close()
     return render_template('pyq_examtype.html', exam_types=exam_types)
 
-@app.route('/pyq/<exam_type>')
+# 2. Select Paper Type
+@app.route('/pyq_papertype/<exam_type>')
 def pyq_papertype(exam_type):
-    """Show paper types based on exam type selected"""
-    data = load_pyq_data()
-    if exam_type not in data:
-        return redirect(url_for('pyq_examtype'))
-    
-    paper_types = list(data[exam_type].keys())
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT DISTINCT paper_type FROM upsc_papers WHERE exam_type = %s", (exam_type,))
+    paper_types = [row[0] for row in cursor.fetchall()]
+    conn.close()
     return render_template('pyq_papertype.html', exam_type=exam_type, paper_types=paper_types)
 
-@app.route('/pyq/<exam_type>/<paper_type>')
+# 3. If qualifying paper, show sub_paper_type (Hindi/English). Else, show year directly.
+@app.route('/pyq_year/<exam_type>/<paper_type>')
 def pyq_year(exam_type, paper_type):
-    """Show available years for the selected exam and paper type"""
-    data = load_pyq_data()
-    
-    # For QUALIFYING PAPERS within MAINS, show the languages
-    if exam_type == "MAINS" and paper_type == "QUALIFYING PAPERS":
-        languages = list(data[exam_type][paper_type].keys())
-        return render_template('pyq_year.html', 
-                              exam_type=exam_type, 
-                              paper_type=paper_type,
-                              items=languages,
-                              item_type="language")
-    
-    # Regular paper types - show years
-    if exam_type in data and paper_type in data[exam_type]:
-        years = list(data[exam_type][paper_type].keys())
-        years.sort(reverse=True)  # Sort years in descending order
-        return render_template('pyq_year.html', 
-                              exam_type=exam_type, 
-                              paper_type=paper_type,
-                              items=years,
-                              item_type="year")
-    
-    return redirect(url_for('pyq_papertype', exam_type=exam_type))
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-@app.route('/pyq/<exam_type>/<paper_type>/<item>')
-def pyq_final(exam_type, paper_type, item):
-    data = load_pyq_data()
-    
-    # For QUALIFYING PAPERS, item is a language, so show years
-    if exam_type == "MAINS" and paper_type == "QUALIFYING PAPERS":
-        if item in data[exam_type][paper_type]:
-            years = list(data[exam_type][paper_type][item].keys())
-            years.sort(reverse=True)
-            return render_template('pyq_qualifying_year.html',
-                                   exam_type=exam_type,
-                                   paper_type=paper_type,
-                                   items=years,       # <-- changed to 'items'
-                                   item_type="year",   # <-- added item_type
-                                   language=item)
-        return redirect(url_for('pyq_year', exam_type=exam_type, paper_type=paper_type))
-    
-    # For regular papers, item is a year, so download
-    if exam_type in data and paper_type in data[exam_type] and item in data[exam_type][paper_type]:
-        pdf_url = data[exam_type][paper_type][item]
-        return redirect(pdf_url)
-    
-    return "PDF not found", 404
+    cursor.execute(
+        "SELECT DISTINCT sub_paper_type FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND sub_paper_type IS NOT NULL",
+        (exam_type, paper_type)
+    )
+    sub_papers = [row[0] for row in cursor.fetchall()]
+    conn.close()
 
-@app.route('/pyq/<exam_type>/<paper_type>/<language>/<year>')
-def download_qualifying_paper(exam_type, paper_type, language, year):
-    """Download qualifying paper for specific language and year"""
-    data = load_pyq_data()
-    
-    if (exam_type == "MAINS" and 
-        paper_type == "QUALIFYING PAPERS" and
-        language in data[exam_type][paper_type] and
-        year in data[exam_type][paper_type][language]):
-        
-        pdf_url = data[exam_type][paper_type][language][year]
-        return redirect(pdf_url)
-    
-    return "PDF not found", 404
-
-
-
-
-# Ensure OpenAI API key is set
-OPENAI_API_KEY = "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"
-if openai:
-    openai.api_key = OPENAI_API_KEY
-
-@app.route('/generate_quiz')
-def generate_quiz():
-    return render_template('generate_quiz.html')
-
-@app.route('/start_quiz', methods=['POST'])
-def start_quiz():
-    if not openai:
-        return jsonify({"error": "OpenAI module not found. Please install openai using 'pip install openai'."}), 500
-    
-    data = request.json
-    topic = data.get('topic')
-    difficulty = data.get('difficulty')
-
-    # Generate quiz question using OpenAI
-    prompt = f"Generate a {difficulty} level multiple-choice question on {topic} with 4 options and the correct answer. Format as JSON: {{'question': '', 'options': [], 'correct_answer': ''}}"
-    
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "system", "content": prompt}]
+    if sub_papers:
+        # Qualifying paper — show sub paper type (language)
+        return render_template(
+            'pyq_qualifying_year.html',
+            exam_type=exam_type,
+            paper_type=paper_type,
+            items=sub_papers,
+            item_type='language'
         )
-        question_data = response['choices'][0]['message']['content']
-        return jsonify(question_data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    else:
+        # Regular paper — show years
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT DISTINCT year FROM upsc_papers WHERE exam_type = %s AND paper_type = %s",
+            (exam_type, paper_type)
+        )
+        years = [row[0] for row in cursor.fetchall()]
+        conn.close()
+
+        return render_template(
+            'pyq_year.html',
+            exam_type=exam_type,
+            paper_type=paper_type,
+            years=years
+        )
+
+# 4. After selecting language, show year
+@app.route('/pyq_year/<exam_type>/<paper_type>/<sub_paper_type>')
+def pyq_subpaper_year(exam_type, paper_type, sub_paper_type):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT DISTINCT year FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND sub_paper_type = %s",
+        (exam_type, paper_type, sub_paper_type)
+    )
+    years = [row[0] for row in cursor.fetchall()]
+    conn.close()
+
+    return render_template(
+        'pyq_qualifying_year.html',
+        exam_type=exam_type,
+        paper_type=paper_type,
+        items=years,
+        item_type='year',
+        sub_paper_type=sub_paper_type
+    )
+
+# 5. Final PDF Download
+@app.route('/pyq_final/<exam_type>/<paper_type>/<int:year>')
+@app.route('/pyq_final/<exam_type>/<paper_type>/<sub_paper_type>/<int:year>')
+def pyq_final(exam_type, paper_type, year, sub_paper_type=None):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    if sub_paper_type:
+        cursor.execute(
+            "SELECT pdf_link FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND sub_paper_type = %s AND year = %s",
+            (exam_type, paper_type, sub_paper_type, year)
+        )
+    else:
+        cursor.execute(
+            "SELECT pdf_link FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND year = %s",
+            (exam_type, paper_type, year)
+        )
+
+    row = cursor.fetchone()
+    conn.close()
+
+    if row:
+        return redirect(row['pdf_link'])
+    else:
+        return "PDF not found."
     
 
 
@@ -738,6 +634,49 @@ def csat_test(topic):
         session['mcqs'] = mcqs
         return render_template("csat_test.html", topic=topic, mcqs=mcqs)
 
+
+
+
+
+
+
+
+
+@app.route("/interview_index")
+def interview_index():
+    return render_template("interview_index.html")
+
+@app.route("/interview-overview")
+def interview_overview():
+    return render_template("interview_overview.html")
+
+
+@app.route("/interview_FAQs")
+def interview_FAQs():
+    # Construct the full path to the JSON file in the data folder
+    json_path = os.path.join(app.root_path, "data", "interview_faqs.json")
+
+    # Read the JSON data
+    with open(json_path, "r", encoding="utf-8") as file:
+        faqs = json.load(file)
+
+    # Pass the data to the template
+    return render_template("interview_FAQs.html", faqs=faqs)
+
+
+@app.route('/interview_videos')
+def interview_videos():
+    json_path = os.path.join('data', 'interview_videos.json') 
+    with open(json_path, 'r') as f:
+        videos = json.load(f)
+    return render_template('interview_videos.html', videos=videos)
+
+
+@app.route('/daf_videos')
+def daf_videos():
+    with open('data/interview_DAF_videos.json', 'r') as f:
+        videos = json.load(f)
+    return render_template('interview_DAF.html', videos=videos['DAF_Preparation'])
 
 
 

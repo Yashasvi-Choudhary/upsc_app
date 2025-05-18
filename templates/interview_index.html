@@ -1,0 +1,86 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-7xl mx-auto px-4 py-16">
+  <div class="flex items-center justify-center relative">
+    <a
+      href="{{ url_for('dashboard') }}"
+      class="w-12 h-12 bg-white text-orange-600 hover:bg-orange-200 rounded-full flex items-center justify-center shadow transition-colors absolute left-0"
+    >
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <h1 class="text-4xl font-bold text-center mb-4 text-gray-800">
+      INTERVIEW PREPARATION
+    </h1>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mt-16">
+    <!-- Card: Overview -->
+    <a
+      href="{{ url_for('interview_overview') }}"
+      class="group border-2 border-orange-500 rounded-2xl p-8 bg-white shadow-md hover:bg-orange-100 hover:border-orange-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+    >
+      <h2
+        class="text-2xl font-semibold text-orange-600 group-hover:text-orange-700 mb-3"
+      >
+        Overview
+      </h2>
+      <p
+        class="text-gray-600 group-hover:text-gray-800 text-base leading-relaxed"
+      >
+        Understand the structure, purpose, and mindset needed for the UPSC
+        Personality Test.
+      </p>
+    </a>
+
+    <!-- Card: Expert Videos -->
+    <a
+      href="{{ url_for('interview_videos') }}"
+      class="group border-2 border-orange-500 rounded-2xl p-8 bg-white shadow-md hover:bg-orange-100 hover:border-orange-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+    >
+      <h2
+        class="text-2xl font-semibold text-orange-600 group-hover:text-orange-700 mb-3"
+      >
+        Expert Videos
+      </h2>
+      <p
+        class="text-gray-600 group-hover:text-gray-800 text-base leading-relaxed"
+      >
+        Watch toppers and mentors guide you on how to ace the interview.
+      </p>
+    </a>
+
+    <!-- Card: FAQs -->
+    <a
+      href="{{ url_for('interview_FAQs') }}"
+      class="group border-2 border-orange-500 rounded-2xl p-8 bg-white shadow-md hover:bg-orange-100 hover:border-orange-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+    >
+      <h2
+        class="text-2xl font-semibold text-orange-600 group-hover:text-orange-700 mb-3"
+      >
+        FAQs
+      </h2>
+      <p
+        class="text-gray-600 group-hover:text-gray-800 text-base leading-relaxed"
+      >
+        Get answers to common doubts and fears about the interview process.
+      </p>
+    </a>
+
+    <!-- Card: DAF Preparation -->
+    <a
+      href="{{ url_for('daf_videos') }}"
+      class="group border-2 border-orange-500 rounded-2xl p-8 bg-white shadow-md hover:bg-orange-100 hover:border-orange-600 transition-all duration-300 ease-in-out transform hover:scale-105"
+    >
+      <h2
+        class="text-2xl font-semibold text-orange-600 group-hover:text-orange-700 mb-3"
+      >
+        DAF Preparation
+      </h2>
+      <p
+        class="text-gray-600 group-hover:text-gray-800 text-base leading-relaxed"
+      >
+        Learn how to fill and prepare for DAF-based questions effectively.
+      </p>
+    </a>
+  </div>
+</div>
+{% endblock %}

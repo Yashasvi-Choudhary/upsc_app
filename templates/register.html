@@ -54,12 +54,17 @@
       >
         <h2 class="text-2xl font-semibold text-center mb-6">Register</h2>
 
-        <!-- Error Message Display -->
-        {% if message %}
-        <p class="text-red-600 text-center mb-4">{{ message }}</p>
-        {% endif %}
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div
+          class="mb-4 text-sm text-center rounded p-2 {% if category == 'success' %}bg-green-100 text-green-700 border border-green-300 {% elif category == 'danger' %}bg-red-100 text-red-700 border border-red-300 {% elif category == 'warning' %}bg-yellow-100 text-yellow-700 border border-yellow-300 {% else %}bg-gray-100 text-gray-700 border border-gray-300{% endif %}"
+        >
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
 
-        <form action="/register" method="POST">
+        <form action="/register" method="POST" autocomplete="off">
           <div class="mb-6 input-group">
             <input
               type="text"

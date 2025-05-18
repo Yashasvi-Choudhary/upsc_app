@@ -1,0 +1,109 @@
+{% extends "base.html" %} {% block content %}
+
+<!-- Section Container -->
+<section class="max-w-7xl mx-auto px-6 py-10 text-gray-800 space-y-14">
+  <!-- DAF Overview Section -->
+  <div>
+    <!-- Back Button and Heading -->
+    <div class="flex items-center mb-8">
+      <a
+        href="{{ url_for('interview_index') }}"
+        class="w-10 h-10 bg-white text-orange-600 hover:bg-orange-200 rounded-full flex items-center justify-center shadow transition-colors mr-4"
+      >
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <h2 class="text-3xl font-bold text-orange-600">
+        Understanding the DAF (Detailed Application Form)
+      </h2>
+    </div>
+
+    <!-- Description -->
+    <p class="text-lg leading-relaxed text-gray-700 mb-10">
+      The Detailed Application Form (DAF) is not just a form — it's your
+      personal blueprint that guides the UPSC interview board. Once you qualify
+      the Preliminary Exam, you are required to fill the DAF for the Mains and
+      Interview stage. It contains crucial information about your background,
+      interests, education, and preferences. A well-presented DAF can set the
+      tone for your interview and help you stand out positively.
+    </p>
+
+    <!-- Highlights -->
+    <div class="space-y-10">
+      {% set highlights = [ {'icon': '📝', 'title': 'What Exactly is the DAF?',
+      'desc': 'The DAF is a comprehensive form that includes your personal
+      details, educational background, work experience, optional subjects,
+      service and cadre preferences, hobbies, and more. The interview board
+      refers to this document to frame questions specific to you.'}, {'icon':
+      '🎯', 'title': 'Why is it So Important?', 'desc': 'The UPSC interview is
+      largely based on your DAF. A majority of questions are asked from the
+      details you provide. Being honest and thorough increases your credibility
+      and confidence during the interaction.'}, {'icon': '🎤', 'title': 'How to
+      Present Your DAF?', 'desc': 'Avoid vague answers. Be specific and
+      self-aware. For every point you mention—be it a hobby, subject, or
+      preference—prepare thoughtful explanations and practical examples.
+      Practice mock interviews based on your DAF.'}, {'icon': '📌', 'title':
+      'Key Points to Keep in Mind', 'desc': 'Be factually correct and consistent
+      throughout.\nDon’t exaggerate hobbies or achievements.\nBe prepared to
+      answer everything you mention.\nUnderstand current issues related to your
+      background.'} ] %} {% for point in highlights %}
+      <div
+        class="flex items-start gap-4 group transition duration-300 hover:shadow-lg hover:rounded-lg hover:bg-orange-50 p-3"
+      >
+        <div
+          class="text-3xl transform transition-transform group-hover:scale-110 group-hover:-translate-y-1"
+        >
+          {{ point.icon }}
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold mb-1 text-gray-900">
+            {{ point.title }}
+          </h3>
+          {% if 'Key Points' in point.title %}
+          <ul class="list-disc ml-5 space-y-1 text-gray-700">
+            {% for line in point.desc.split('\n') %}
+            <li>{{ line }}</li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-gray-700">{{ point.desc }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- DAF Videos Section -->
+  <div>
+    <h2
+      class="text-2xl font-semibold text-orange-600 border-b-2 border-orange-400 pb-1 mb-6"
+    >
+      DAF Videos
+    </h2>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+    >
+      {% for video in videos %}
+      <a
+        href="{{ video.url }}"
+        target="_blank"
+        class="transform transition duration-300 hover:scale-105 hover:shadow-xl bg-white rounded-xl overflow-hidden shadow-md"
+      >
+        <img
+          src="{{ video.thumbnail }}"
+          alt="{{ video.title }}"
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-4">
+          <h3 class="text-sm font-medium text-gray-900 hover:text-orange-600">
+            {{ video.title }}
+          </h3>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

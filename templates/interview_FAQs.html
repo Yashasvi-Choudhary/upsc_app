@@ -1,0 +1,48 @@
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-5xl mx-auto px-4 py-12 text-gray-800">
+  <!-- Header -->
+  <div class="flex items-center mb-10">
+    <a
+      href="/interview_index"
+      class="w-12 h-12 bg-white text-orange-600 hover:bg-orange-200 rounded-full flex items-center justify-center shadow transition-colors absolute left-20"
+      title="Back to Dashboard"
+    >
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <h1 class="text-4xl font-bold text-orange-600">UPSC Interview FAQs</h1>
+  </div>
+
+  <!-- FAQ List -->
+  <div class="space-y-5">
+    {% for faq in faqs %}
+    <div
+      class="border border-orange-200 rounded-xl shadow-md transition hover:shadow-lg bg-white"
+    >
+      <button
+        onclick="toggleFAQ(this)"
+        class="w-full text-left px-6 py-5 flex justify-between items-center hover:bg-orange-50 rounded-t-xl transition duration-300"
+      >
+        <span class="font-semibold text-lg text-gray-800"
+          >{{ faq.question }}</span
+        >
+        <i
+          class="fas fa-chevron-down text-orange-500 transition-transform duration-300"
+        ></i>
+      </button>
+      <div class="px-6 pb-5 pt-2 text-gray-700 hidden">
+        <p>{{ faq.answer }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+  function toggleFAQ(button) {
+    const answer = button.nextElementSibling;
+    const icon = button.querySelector("i");
+    answer.classList.toggle("hidden");
+    icon.classList.toggle("rotate-180");
+  }
+</script>
+{% endblock %}

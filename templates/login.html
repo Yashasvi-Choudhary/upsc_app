@@ -65,13 +65,34 @@
         </div>
         {% endfor %} {% endif %} {% endwith %}
 
-        <form action="/login" method="POST" onsubmit="return validateForm()">
+        <!-- Login Form -->
+        <form
+          action="/login"
+          method="POST"
+          onsubmit="return validateForm()"
+          autocomplete="off"
+        >
+          <!-- Dummy hidden fields to trick browser autofill -->
+          <input
+            type="text"
+            name="fakeuser"
+            autocomplete="off"
+            style="display: none"
+          />
+          <input
+            type="password"
+            name="fakepass"
+            autocomplete="new-password"
+            style="display: none"
+          />
+
           <div class="mb-6 input-group">
             <input
               type="email"
               name="email"
               id="email"
               placeholder=" "
+              autocomplete="off"
               required
             />
             <label for="email">Email</label>
@@ -84,6 +105,7 @@
               name="password"
               id="password"
               placeholder=" "
+              autocomplete="new-password"
               required
             />
             <label for="password">Password</label>
