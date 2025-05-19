@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+  tailwind.config = {
+    darkMode: 'class', // enable class-based dark mode
+  }
+</script>
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Font Awesome -->
@@ -25,107 +30,26 @@
         UPSC Aspirant
       </h1>
 
-      <!-- Profile Button & Popup -->
       
-
-        <div
-          id="profilePanel"
-          class="hidden absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-xl shadow-xl z-50 p-4 text-sm"
-        >
-          <form
-            method="POST"
-            action="{{ url_for('update_profile') }}"
-            class="space-y-3"
-          >
-            <div class="text-sm text-gray-700">Logged in as:</div>
-
-            <!-- Username -->
-            <div class="font-semibold text-blue-800 text-xl">
-              <span id="usernameDisplay">{{ current_user.username }}</span>
-              <input
-                type="text"
-                name="new_username"
-                id="newUsername"
-                class="hidden border border-gray-300 rounded px-3 py-1 text-gray-700 w-full"
-                value="{{ current_user.username }}"
-              />
-            </div>
-
-            <!-- Email -->
-            <div class="font-semibold text-blue-800 text-xl">
-              <span id="emailDisplay">{{ current_user.email }}</span>
-              <input
-                type="email"
-                name="new_email"
-                id="newEmail"
-                class="hidden border border-gray-300 rounded px-3 py-1 text-gray-700 w-full"
-                value="{{ current_user.email }}"
-              />
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex space-x-2">
-              <button
-                type="button"
-                id="editBtn"
-                class="w-full bg-blue-600 text-white rounded py-1 hover:bg-blue-800"
-              >
-                Edit
-              </button>
-              <button
-                type="submit"
-                id="updateBtn"
-                class="w-full hidden bg-blue-600 text-white rounded py-1 hover:bg-blue-800"
-              >
-                Update
-              </button>
-            </div>
-          </form>
-
-          <div class="border-t mt-3 pt-3">
-            <a
-              href="/logout"
-              class="w-full block text-center text-red-600 hover:text-red-800 font-medium"
-              >Logout</a
-            >
-          </div>
-        </div>
-      </div>
+      <!-- Profile Button -->
+      <a
+          href="{{ url_for('profile') }}"
+          class="flex flex-col items-center text-white p-2 hover:bg-blue-800 rounded"
+      >
+      <img
+           src="https://img.icons8.com/ios-glyphs/30/ffffff/user--v1.png"
+          alt="User"
+           class="h-8 w-8"
+      />
+       <span class="text-xs mt-1 font-bold">Profile</span>
+      </a>
     </header>
 
     <!-- Main Content Area -->
     <main class="pt-36 pb-32 px-4">{% block content %}{% endblock %}</main>
 
-      <!-- Settings Panel -->
-      <div
-        id="settingsPanel"
-        class="hidden fixed bottom-20 right-4 w-80 bg-white rounded-xl shadow-xl border p-4 z-50"
-      >
-        <h2 class="text-lg font-semibold text-blue-800 mb-4">Settings</h2>
-
-        <!-- Theme Toggle -->
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-gray-700 font-medium">Dark Mode</span>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" id="themeToggle" class="sr-only peer">
-            <div
-              class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600 after:content-[''] after:absolute after:left-[4px] after:top-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"
-            ></div>
-          </label>
-        </div>
-
-        <!-- Help & Support -->
-        <div class="mb-4">
-          <a href="/help" class="text-blue-600 hover:underline">Help & Support</a>
-        </div>
-
-        <!-- App Info -->
-        <div class="text-sm text-gray-500">
-          <p>Version: 1.0.0</p>
-          <p>Last Updated: May 2025</p>
-          <a href="/feedback" class="text-blue-600 hover:underline">Report a Bug / Give Feedback</a>
-        </div>
-      </div>
+     
+      
     </main>
 
     <!-- Bottom Footer -->
@@ -144,79 +68,29 @@
           <span class="text-xs">Search</span>
         </div>
       </a>
-      <a href="">
+      <a 
+         href="{{ url_for('show_bookmarks') }}">
         <div class="flex flex-col items-center">
           <img src="https://img.icons8.com/ios-filled/24/bookmark-ribbon.png" />
           <span class="text-xs">Bookmark</span>
         </div>
       </a>
-      <button id="settingsBtn">
-        <div class="flex flex-col items-center">
-          <img src="https://img.icons8.com/ios-filled/24/settings.png" />
-          <span class="text-xs">Settings</span>
-        </div>
-      </button>
+      <a href="settings">
+  <div class="flex flex-col items-center">
+    <img src="https://img.icons8.com/ios-filled/24/settings.png" />
+    <span class="text-xs">Settings</span>
+  </div>
+</a>
     </footer>
 
-     <!-- Settings Panel -->
-      <div
-        id="settingsPanel"
-        class="hidden fixed bottom-20 right-4 w-80 bg-white rounded-xl shadow-xl border p-4 z-50"
-      >
-        <h2 class="text-lg font-semibold text-blue-800 mb-4">Settings</h2>
-
-        <!-- Theme Toggle -->
-        <div class="flex items-center justify-between mb-4">
-          <span class="text-gray-700 font-medium">Dark Mode</span>
-          <label class="relative inline-flex items-center cursor-pointer">
-            <input type="checkbox" value="" id="themeToggle" class="sr-only peer">
-            <div
-              class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600 after:content-[''] after:absolute after:left-[4px] after:top-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"
-            ></div>
-          </label>
-        </div>
-
-        <!-- Help & Support -->
-        <div class="mb-4">
-          <a href="/help" class="text-blue-600 hover:underline">Help & Support</a>
-        </div>
-
-        <!-- App Info -->
-        <div class="text-sm text-gray-500">
-          <p>Version: 1.0.0</p>
-          <p>Last Updated: May 2025</p>
-          <a href="/feedback" class="text-blue-600 hover:underline">Report a Bug / Give Feedback</a>
-        </div>
-      </div>
+     
 
 
-    <!-- Script -->
-    <script>
-      
-
-
-     const settingsBtn = document.getElementById("settingsBtn");
-      const settingsPanel = document.getElementById("settingsPanel");
-      const themeToggle = document.getElementById("themeToggle");
-
-      // Toggle settings panel
-      settingsBtn.addEventListener("click", () => {
-        settingsPanel.classList.toggle("hidden");
-      });
-
-      // Click outside to close settings
-      document.addEventListener("click", (e) => {
-        if (!settingsBtn.contains(e.target) && !settingsPanel.contains(e.target)) {
-          settingsPanel.classList.add("hidden");
-        }
-      });
-
-      // Theme toggle functionality
-      themeToggle.addEventListener("change", () => {
-        document.body.classList.toggle("bg-gray-100");
-        document.body.classList.toggle("bg-gray-900");
-        document.body.classList.toggle("text-white");
-      });
-    </script>
+   <script>
+  // On load, apply saved theme
+  if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.classList.add("dark");
+  }
+</script>
   </body>
 </html>

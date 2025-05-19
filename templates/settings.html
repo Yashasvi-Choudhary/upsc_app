@@ -1,0 +1,53 @@
+{% extends 'base.html' %} {% block title %}Settings - UPSC Aspirant{% endblock
+%} {% block content %}
+<div
+  class="max-w-xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6"
+>
+  <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
+    Settings
+  </h2>
+
+  <!-- Dark Mode Toggle -->
+  <div class="flex items-center justify-between mb-6">
+    <span class="text-gray-700 dark:text-gray-200 font-medium">Dark Mode</span>
+    <label class="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" id="darkModeToggle" class="sr-only peer" />
+      <div
+        class="w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:bg-blue-600 after:content-[''] after:absolute after:left-[4px] after:top-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white"
+      ></div>
+    </label>
+  </div>
+
+  <!-- Additional Settings -->
+  <div class="text-sm text-gray-500 dark:text-gray-400">
+    <p>Version: 1.0.0</p>
+    <p>Last Updated: May 2025</p>
+    <a href="/help" class="text-blue-600 hover:underline dark:text-blue-400"
+      >Help & Support</a
+    ><br />
+    <a href="/feedback" class="text-blue-600 hover:underline dark:text-blue-400"
+      >Report a Bug / Give Feedback</a
+    >
+  </div>
+</div>
+
+<script>
+  const toggle = document.getElementById("darkModeToggle");
+
+  // On load, set toggle state
+  if (localStorage.getItem("theme") === "dark") {
+    toggle.checked = true;
+    document.documentElement.classList.add("dark");
+  }
+
+  toggle.addEventListener("change", () => {
+    if (toggle.checked) {
+      localStorage.setItem("theme", "dark");
+      document.documentElement.classList.add("dark");
+    } else {
+      localStorage.setItem("theme", "light");
+      document.documentElement.classList.remove("dark");
+    }
+  });
+</script>
+{% endblock %}

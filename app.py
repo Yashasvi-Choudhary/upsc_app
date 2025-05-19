@@ -13,6 +13,9 @@ import urllib.parse
 from flask import send_file
 import json ,  mysql.connector 
 from datetime import datetime, timedelta
+from flask import get_flashed_messages
+
+import uuid 
 
 
 load_dotenv()
@@ -22,11 +25,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24).hex()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:harharmahadev@localhost/upsc_app'
 
-
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
 
 # User Model
 class User(UserMixin, db.Model):
@@ -34,46 +35,61 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(100))
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    session_token = db.Column(db.String(255), nullable=True)  # 👈 Add this line
 
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
+
+# Session token validation before each request
+@app.before_request
+def validate_session():
+    if current_user.is_authenticated:
+        session_token = session.get('session_token')
+        if session_token != current_user.session_token:
+            logout_user()
+            session.pop('session_token', None)
+            flash("Logged out due to session invalidation.", "warning")
+            return redirect(url_for('login'))
 
 # Home
 @app.route('/')
 def home():
     return render_template('index.html')
 
-
 # Register Route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'GET':
+        # Clear any old flash messages when opening the register page
+        get_flashed_messages()
+
     if request.method == 'POST':
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
 
-        # Password mismatch check
         if password != confirm_password:
             flash("Passwords do not match.", "danger")
             return redirect(url_for('register'))
 
-        # Check if user already exists
-        existing_user = User.query.filter_by(email=email).first()
-        if existing_user:
+        if User.query.filter_by(email=email).first():
             flash("Email already registered.", "warning")
             return redirect(url_for('register'))
 
-        # Create new user
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, email=email, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
-        # Auto-login after registration
+        # Auto-login with token
+        new_user.session_token = str(uuid.uuid4())
+        db.session.commit()
         login_user(new_user)
-        flash("Registration successful! Redirecting to dashboard.", "success")
+        session['session_token'] = new_user.session_token
+
+        flash("Registration successful!", "success")
         return redirect(url_for('dashboard'))
 
     return render_template('register.html')
@@ -87,60 +103,90 @@ def login():
 
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
+            # Clear old flash messages before adding a new one
+            session.pop('_flashes', None)
+
+            user.session_token = str(uuid.uuid4())
+            db.session.commit()
+            db.session.refresh(user)
+
             login_user(user)
+            session['session_token'] = user.session_token
+
             flash("Logged in successfully.", "success")
             return redirect(url_for('dashboard'))
 
+        # Clear old flashes to avoid duplicate messages for failed login
+        session.pop('_flashes', None)
         flash("Invalid credentials", "danger")
-    return render_template('login.html')  # Make sure autocomplete="off" is used in the HTML form
 
-# Dashboard Route
+    return render_template('login.html')
+
+
+# Dashboard
 @app.route('/dashboard')
 @login_required
 def dashboard():
     return render_template('dashboard.html')
 
-# Update Profile Route
+# Profile
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
+
+# Update Profile
 @app.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
-    new_username = request.form['new_username']
-    new_email = request.form['new_email']
+    new_username = request.form.get('new_username')
+    new_email = request.form.get('new_email')
+
+    if not new_username or not new_email:
+        flash("Both fields are required.", "danger")
+        return redirect(url_for('profile'))
 
     current_user.username = new_username
     current_user.email = new_email
     db.session.commit()
 
     flash("Profile updated successfully!", "success")
-    return redirect(url_for('dashboard'))
+    return redirect(url_for('profile'))
 
-# Logout Route
+# Logout
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
+    # Clear old flashes
+    session.pop('_flashes', None)
+
+    current_user.session_token = None
+    db.session.commit()
     logout_user()
-    flash("Logged out.", "info")
+    session.pop('session_token', None)
+
+    flash("Logged out successfully.", "info")
     return redirect(url_for('login'))
 
 
 
 
 
-
-
-
 @app.route('/syllabus')
+@login_required
 def syllabus_main():
     """Main syllabus page that asks users to select an exam type"""
     return render_template('syllabus_main.html')
 
 @app.route('/syllabus/select_exam_type')
+@login_required
 def syllabus_select_exam_type():
     """Page to select exam type (prelims or mains)"""
     return render_template('syllabus_select_exam_type.html')
 
 @app.route('/syllabus/select_paper_type')
 def syllabus_select_paper_type():
+   
     """Page to select paper type based on the selected exam type"""
     exam_type = request.args.get('exam_type')
     if not exam_type:
@@ -164,6 +210,7 @@ def syllabus_select_paper_type():
                           paper_types=paper_types)
 
 @app.route('/syllabus/show_syllabus')
+@login_required
 def syllabus_show_syllabus():
     """Show available syllabi for the selected exam and paper type"""
     exam_type = request.args.get('exam_type')
@@ -191,6 +238,7 @@ def syllabus_show_syllabus():
                           paper_type=paper_type)
 
 @app.route('/syllabus/access/<int:syllabus_id>')
+@login_required
 def access_syllabus(syllabus_id):
     """Access the syllabus PDF file - either download it or redirect to URL"""
     conn = get_connection()
@@ -264,7 +312,8 @@ bookmarks = []
 categories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
 regions = {'india': 'in', 'world': 'us'}
 
-def get_news(endpoint, params, limit=12):
+def get_news(endpoint, params, limit=12): 
+
     """Generic function to fetch news with fallback and filtering"""
     try:
         response = requests.get(f"{BASE_URL}/{endpoint}", params=params, timeout=5)
@@ -285,6 +334,7 @@ def get_top_headlines(category='general', country='in', limit=12):
     return get_news('top-headlines', params, limit)
 
 @app.route('/current_affairs')
+@login_required
 def current_affairs():
     return redirect(url_for('news_view', region='india', category='general'))
 
@@ -309,6 +359,7 @@ def news_view(region, category):
     )
 
 @app.route('/bookmark', methods=['POST'])
+
 def bookmark():
     article = {
         'title': request.form['title'],
@@ -322,6 +373,7 @@ def bookmark():
     return redirect(request.referrer or url_for('current_affairs'))
 
 @app.route('/bookmarks')
+@login_required
 def show_bookmarks():
     return render_template('CA_bookmarks.html', bookmarks=bookmarks)
 
@@ -365,7 +417,9 @@ topic_icons = {
 
 
 @app.route('/static_gk')
+@login_required
 def static_gk():
+
     topics_data = load_topics()
     
     # Transform data for template
@@ -453,6 +507,7 @@ def get_db_connection():
 
 # 1. Select Exam Type
 @app.route('/pyq_examtype')
+@login_required
 def pyq_examtype():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -463,6 +518,7 @@ def pyq_examtype():
 
 # 2. Select Paper Type
 @app.route('/pyq_papertype/<exam_type>')
+@login_required
 def pyq_papertype(exam_type):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -473,6 +529,7 @@ def pyq_papertype(exam_type):
 
 # 3. If qualifying paper, show sub_paper_type (Hindi/English). Else, show year directly.
 @app.route('/pyq_year/<exam_type>/<paper_type>')
+@login_required
 def pyq_year(exam_type, paper_type):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -513,6 +570,7 @@ def pyq_year(exam_type, paper_type):
 
 # 4. After selecting language, show year
 @app.route('/pyq_year/<exam_type>/<paper_type>/<sub_paper_type>')
+@login_required
 def pyq_subpaper_year(exam_type, paper_type, sub_paper_type):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -535,6 +593,7 @@ def pyq_subpaper_year(exam_type, paper_type, sub_paper_type):
 # 5. Final PDF Download
 @app.route('/pyq_final/<exam_type>/<paper_type>/<int:year>')
 @app.route('/pyq_final/<exam_type>/<paper_type>/<sub_paper_type>/<int:year>')
+@login_required
 def pyq_final(exam_type, paper_type, year, sub_paper_type=None):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
@@ -643,15 +702,19 @@ def csat_test(topic):
 
 
 @app.route("/interview_index")
+@login_required
 def interview_index():
+    
     return render_template("interview_index.html")
 
 @app.route("/interview-overview")
+@login_required
 def interview_overview():
     return render_template("interview_overview.html")
 
 
 @app.route("/interview_FAQs")
+@login_required
 def interview_FAQs():
     # Construct the full path to the JSON file in the data folder
     json_path = os.path.join(app.root_path, "data", "interview_faqs.json")
@@ -665,6 +728,7 @@ def interview_FAQs():
 
 
 @app.route('/interview_videos')
+@login_required
 def interview_videos():
     json_path = os.path.join('data', 'interview_videos.json') 
     with open(json_path, 'r') as f:
@@ -673,6 +737,7 @@ def interview_videos():
 
 
 @app.route('/daf_videos')
+@login_required
 def daf_videos():
     with open('data/interview_DAF_videos.json', 'r') as f:
         videos = json.load(f)
