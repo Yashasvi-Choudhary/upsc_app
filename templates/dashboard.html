@@ -1,20 +1,8 @@
 <!-- templates/dashboard.html -->
 {% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
 %} {% block content %}
-<div class="flex justify-center">
+<div class="flex justify-center mt-36">
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-10">
-    <!-- <a href="#" class="block">
-      <div
-        class="bg-teal-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/brain.png"
-          class="mb-3"
-        />
-        <p class="font-semibold text-base">AI Quiz Generator</p>
-      </div>
-    </a> -->
-
     <a href="{{ url_for('current_affairs') }}" class="block">
       <div
         class="bg-yellow-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
@@ -62,7 +50,7 @@
 
     <a href="static_gk" class="block">
       <div
-        class="bg-indigo-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+        class="bg-fuchsia-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
         <img
           src="https://img.icons8.com/ios-filled/60/light-on.png"
@@ -72,7 +60,7 @@
       </div>
     </a>
 
-    <a href="{{ url_for('csat_practice') }}" class="block">
+    <a href="{{ url_for('csat') }}" class="block">
       <div
         class="bg-violet-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
@@ -83,18 +71,6 @@
         <p class="font-semibold text-base">CSAT Practice</p>
       </div>
     </a>
-
-    <!-- <a href="#" class="block">
-      <div
-        class="bg-pink-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/edit--v1.png"
-          class="mb-3"
-        />
-        <p class="font-semibold text-base">Answer Writing</p>
-      </div>
-    </a> -->
 
     <a href="interview_index" class="block">
       <div
@@ -108,16 +84,18 @@
       </div>
     </a>
 
-    <!-- <a href="#" class="block">
+    <a href="{{ url_for('latest_updates') }}" class="block">
       <div
-        class="bg-purple-500 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+        class="bg-cyan-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
       >
-        <img src="https://img.icons8.com/ios-filled/60/task.png" class="mb-3" />
-        <p class="font-semibold text-base">Study Tracker</p>
+        <img
+          src="https://img.icons8.com/ios-filled/60/appointment-reminders--v1.png"
+          class="mb-3"
+        />
+
+        <p class="font-semibold text-base">Latest Updates</p>
       </div>
     </a>
   </div>
-</div> -->
-    {% endblock %}
-  </div>
 </div>
+{% endblock %}

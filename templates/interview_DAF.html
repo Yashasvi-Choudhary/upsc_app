@@ -1,94 +1,98 @@
 {% extends "base.html" %} {% block content %}
+<section class="max-w-7xl mx-auto px-6 py-12 text-gray-800 space-y-16">
+  <!-- Back Button and Heading -->
+  <div class="flex items-center gap-4">
+    <a
+      href="{{ url_for('interview_index') }}"
+      class="w-10 h-10 bg-white text-orange-600 hover:bg-orange-100 rounded-full flex items-center justify-center shadow transition duration-200"
+      title="Back to Interview"
+    >
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <h2 class="text-3xl md:text-4xl font-bold text-orange-600">
+      Understanding the DAF (Detailed Application Form)
+    </h2>
+  </div>
 
-<!-- Section Container -->
-<section class="max-w-7xl mx-auto px-6 py-10 text-gray-800 space-y-14">
-  <!-- DAF Overview Section -->
-  <div>
-    <!-- Back Button and Heading -->
-    <div class="flex items-center mb-8">
-      <a
-        href="{{ url_for('interview_index') }}"
-        class="w-10 h-10 bg-white text-orange-600 hover:bg-orange-200 rounded-full flex items-center justify-center shadow transition-colors mr-4"
-      >
-        <i class="fas fa-arrow-left"></i>
-      </a>
-      <h2 class="text-3xl font-bold text-orange-600">
-        Understanding the DAF (Detailed Application Form)
-      </h2>
-    </div>
-
-    <!-- Description -->
-    <p class="text-lg leading-relaxed text-gray-700 mb-10">
-      The Detailed Application Form (DAF) is not just a form — it's your
-      personal blueprint that guides the UPSC interview board. Once you qualify
-      the Preliminary Exam, you are required to fill the DAF for the Mains and
-      Interview stage. It contains crucial information about your background,
-      interests, education, and preferences. A well-presented DAF can set the
-      tone for your interview and help you stand out positively.
-    </p>
-
-    <!-- Highlights -->
-    <div class="space-y-10">
-      {% set highlights = [ {'icon': '📝', 'title': 'What Exactly is the DAF?',
-      'desc': 'The DAF is a comprehensive form that includes your personal
-      details, educational background, work experience, optional subjects,
-      service and cadre preferences, hobbies, and more. The interview board
-      refers to this document to frame questions specific to you.'}, {'icon':
-      '🎯', 'title': 'Why is it So Important?', 'desc': 'The UPSC interview is
-      largely based on your DAF. A majority of questions are asked from the
-      details you provide. Being honest and thorough increases your credibility
-      and confidence during the interaction.'}, {'icon': '🎤', 'title': 'How to
-      Present Your DAF?', 'desc': 'Avoid vague answers. Be specific and
-      self-aware. For every point you mention—be it a hobby, subject, or
-      preference—prepare thoughtful explanations and practical examples.
-      Practice mock interviews based on your DAF.'}, {'icon': '📌', 'title':
-      'Key Points to Keep in Mind', 'desc': 'Be factually correct and consistent
-      throughout.\nDon’t exaggerate hobbies or achievements.\nBe prepared to
-      answer everything you mention.\nUnderstand current issues related to your
-      background.'} ] %} {% for point in highlights %}
-      <div
-        class="flex items-start gap-4 group transition duration-300 hover:shadow-lg hover:rounded-lg hover:bg-orange-50 p-3"
-      >
+  <!-- Detailed DAF Description in Bullet Points -->
+  <div class="grid md:grid-cols-2 gap-6">
+    {% set description_points = [ "The DAF (Detailed Application Form) is a
+    crucial document required after clearing the UPSC Prelims to appear for
+    Mains and Interview.", "It includes personal information like name, address,
+    category, and date of birth as per official records.", "You must fill in
+    your educational qualifications, including school, college, university
+    degrees, and any technical/professional certifications.", "It asks for your
+    employment history, if applicable, with detailed roles, durations, and
+    nature of work.", "You need to mention your service and cadre preferences
+    for IAS, IPS, IFS, and other central services.", "It includes your hobbies,
+    sports, positions of responsibility, and achievements, which interviewers
+    often ask about.", "Languages known, extracurricular activities, and
+    leadership roles are also expected to be declared honestly.", "Filling the
+    DAF thoughtfully shows your self-awareness, clarity of goals, and integrity
+    — all key qualities assessed in the interview." ] %} {% for point in
+    description_points %}
+    <div
+      class="bg-orange-50 border-l-4 border-orange-400 p-4 rounded-lg shadow-sm hover:shadow-md transition duration-300 group"
+    >
+      <div class="flex gap-3 items-start">
         <div
-          class="text-3xl transform transition-transform group-hover:scale-110 group-hover:-translate-y-1"
+          class="text-xl text-orange-500 group-hover:scale-110 transition-transform"
+        >
+          📌
+        </div>
+        <p class="text-gray-700 leading-relaxed group-hover:text-orange-700">
+          {{ point }}
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Highlights Section -->
+  <div class="grid md:grid-cols-2 gap-8">
+    {% for point in highlights %}
+    <div
+      class="group bg-white rounded-xl p-6 shadow hover:shadow-xl border-l-4 border-orange-400 hover:border-orange-500 transition duration-300"
+    >
+      <div class="flex items-start gap-4">
+        <div
+          class="text-3xl group-hover:scale-110 transform transition duration-300"
         >
           {{ point.icon }}
         </div>
         <div>
-          <h3 class="text-xl font-semibold mb-1 text-gray-900">
+          <h3 class="text-xl font-semibold mb-2 text-gray-900">
             {{ point.title }}
           </h3>
           {% if 'Key Points' in point.title %}
-          <ul class="list-disc ml-5 space-y-1 text-gray-700">
+          <ul class="list-disc ml-5 text-gray-700 space-y-1">
             {% for line in point.desc.split('\n') %}
             <li>{{ line }}</li>
             {% endfor %}
           </ul>
           {% else %}
-          <p class="text-gray-700">{{ point.desc }}</p>
+          <p class="text-gray-700 leading-relaxed">{{ point.desc }}</p>
           {% endif %}
         </div>
       </div>
-      {% endfor %}
     </div>
+    {% endfor %}
   </div>
 
-  <!-- DAF Videos Section -->
+  <!-- DAF Videos -->
+  {% if videos %}
   <div>
     <h2
-      class="text-2xl font-semibold text-orange-600 border-b-2 border-orange-400 pb-1 mb-6"
+      class="text-2xl font-semibold text-orange-600 mb-6 border-b-2 border-orange-400 pb-1"
     >
       DAF Videos
     </h2>
-
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-    >
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {% for video in videos %}
       <a
         href="{{ video.url }}"
         target="_blank"
-        class="transform transition duration-300 hover:scale-105 hover:shadow-xl bg-white rounded-xl overflow-hidden shadow-md"
+        class="rounded-xl overflow-hidden bg-white shadow hover:shadow-xl transform hover:-translate-y-1 transition duration-300"
       >
         <img
           src="{{ video.thumbnail }}"
@@ -96,7 +100,9 @@
           class="w-full h-48 object-cover"
         />
         <div class="p-4">
-          <h3 class="text-sm font-medium text-gray-900 hover:text-orange-600">
+          <h3
+            class="text-sm font-semibold text-gray-900 group-hover:text-orange-600"
+          >
             {{ video.title }}
           </h3>
         </div>
@@ -104,6 +110,47 @@
       {% endfor %}
     </div>
   </div>
-</section>
+  {% endif %}
 
+  <!-- Sample DAF PDFs -->
+  <!-- Sample DAF PDFs Section -->
+  <div>
+    <h2
+      class="text-2xl font-semibold text-orange-600 mb-6 border-b-2 border-orange-400 pb-1"
+    >
+      Sample DAF PDFs
+    </h2>
+    <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {% for pdf in sample_pdfs %}
+      <div
+        class="bg-white rounded-xl shadow hover:shadow-lg transition-all border border-orange-200 p-5 flex flex-col h-full group"
+      >
+        <!-- Icon and Title -->
+        <div class="flex items-center space-x-4 mb-3">
+          <div
+            class="bg-orange-100 p-3 rounded-full group-hover:bg-orange-200 transition"
+          >
+            <i class="fas fa-file-pdf text-red-500 text-2xl"></i>
+          </div>
+          <h3 class="font-semibold text-gray-800 text-base">
+            {{ pdf.replace('_', ' ').replace('.pdf', '').title() }}
+          </h3>
+        </div>
+
+        <!-- Spacer to push button to bottom -->
+        <div class="flex-grow"></div>
+
+        <!-- View Button -->
+        <a
+          href="{{ url_for('static', filename=pdf_folder_name + '/' + pdf) }}"
+          target="_blank"
+          class="mt-4 w-full bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold py-2 rounded-lg text-center transition"
+        >
+          View PDF
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
 {% endblock %}

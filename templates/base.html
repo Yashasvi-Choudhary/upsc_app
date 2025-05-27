@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-  tailwind.config = {
-    darkMode: 'class', // enable class-based dark mode
-  }
-</script>
+
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Font Awesome -->
@@ -20,43 +16,42 @@
     {% block styles %}{% endblock %}
   </head>
 
-  <body class="bg-gray-100">
+  <body class="bg-white text-black">
     <!-- Top Navbar -->
     <header
-      class="fixed top-0 w-full bg-blue-900 text-white flex items-center justify-between px-8  shadow z-50"
+      class="fixed top-0 w-full bg-teal-500 flex items-center justify-between px-8 shadow z-50 h-16"
     >
-      <img src="/static/UPSC_logo.jpg" alt="UPSC Logo" class="h-8" />
-      <h1 class="text-4xl font-extrabold tracking-wide font-serif">
+      <img
+        src="/static/logo3.webp"
+        alt="UPSC Logo"
+        class="h-full object-contain"
+      />
+      <h1 class="text-4xl text-white font-extrabold tracking-wide font-serif">
         UPSC Aspirant
       </h1>
 
-      
       <!-- Profile Button -->
       <a
-          href="{{ url_for('profile') }}"
-          class="flex flex-col items-center text-white p-2 hover:bg-blue-800 rounded"
+        href="{{ url_for('profile') }}"
+        class="flex flex-col items-center p-2 rounded"
       >
-      <img
-           src="https://img.icons8.com/ios-glyphs/30/ffffff/user--v1.png"
+        <img
+          src="https://img.icons8.com/ios-glyphs/30/ffffff/user--v1.png"
           alt="User"
-           class="h-8 w-8"
-      />
-       <span class="text-xs mt-1 font-bold">Profile</span>
+          class="h-9 w-9"
+        />
+        <span class="text-xs mt-1 font-bold text-white">Profile</span>
       </a>
     </header>
 
     <!-- Main Content Area -->
-    <main class="pt-36 pb-32 px-4">{% block content %}{% endblock %}</main>
-
-     
-      
-    </main>
+    <main class="mt-20 pb-32 px-2">{% block content %}{% endblock %}</main>
 
     <!-- Bottom Footer -->
     <footer
-      class="fixed bottom-0 w-full bg-white/60 backdrop-blur shadow flex justify-around py-2 z-50"
+      class="fixed bottom-0 w-full bg-neutral-200/60 backdrop-blur shadow flex justify-around py-2 z-50"
     >
-      <a href="index">
+      <a href="{{ url_for('home') }}">
         <div class="flex flex-col items-center">
           <img src="https://img.icons8.com/ios-filled/24/home.png" />
           <span class="text-xs">Home</span>
@@ -68,29 +63,18 @@
           <span class="text-xs">Search</span>
         </div>
       </a>
-      <a 
-         href="{{ url_for('show_bookmarks') }}">
+      <a href="{{ url_for('show_bookmarks') }}">
         <div class="flex flex-col items-center">
           <img src="https://img.icons8.com/ios-filled/24/bookmark-ribbon.png" />
           <span class="text-xs">Bookmark</span>
         </div>
       </a>
-      <a href="settings">
-  <div class="flex flex-col items-center">
-    <img src="https://img.icons8.com/ios-filled/24/settings.png" />
-    <span class="text-xs">Settings</span>
-  </div>
-</a>
+      <a href="{{ url_for('settings') }}">
+        <div class="flex flex-col items-center">
+          <img src="https://img.icons8.com/ios-filled/24/settings.png" />
+          <span class="text-xs">Settings</span>
+        </div>
+      </a>
     </footer>
-
-     
-
-
-   <script>
-  // On load, apply saved theme
-  if (localStorage.getItem("theme") === "dark") {
-    document.documentElement.classList.add("dark");
-  }
-</script>
   </body>
 </html>

@@ -16,7 +16,7 @@
     </div>
 
     <!-- Sub Heading -->
-    <div class="mb-12 text-2xl font-semibold text-black text-center">
+    <div class="mb-32 text-2xl font-semibold text-black text-center">
       <h2 class="text-3xl font-bold">
         {{ exam_type }} - {{ paper_type }} - {% if item_type == 'language' %}
         Select Language {% else %} Select Year {% endif %}
@@ -25,7 +25,7 @@
 
     <!-- Selection Grid -->
     <div
-      class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-center"
+      class="gap-8 justify-center flex "
     >
       {% for item in items %}
   {% if item_type == 'language' %}

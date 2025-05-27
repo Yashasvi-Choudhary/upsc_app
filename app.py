@@ -1,41 +1,48 @@
-from flask import Flask, flash, render_template, request, redirect, session, url_for , jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-import requests , json 
 import os
 import random
-from dotenv import load_dotenv
-from db_config import get_connection
-from werkzeug.utils import secure_filename
-from urllib.parse import urlparse
-import urllib.parse 
-from flask import send_file
-import json ,  mysql.connector 
+import json
+import requests
+import mysql.connector
+import urllib.parse
 from datetime import datetime, timedelta
-from flask import get_flashed_messages
+import uuid
+from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
+from flask import (
+    Flask, flash, render_template, request, redirect,
+    session, url_for, jsonify, send_file, get_flashed_messages
+)
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import (
+    LoginManager, UserMixin, login_user, login_required,
+    logout_user, current_user
+)
+from urllib.parse import urlparse
 
-import uuid 
+from bs4 import BeautifulSoup
+from db_config import get_connection
+from extensions import db
+import urllib3
+from models import User, Feedback   # import models here
 
 
 load_dotenv()
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24).hex()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:harharmahadev@localhost/upsc_app'
 
-db = SQLAlchemy(app)
+db.init_app(app)   # <-- initialize db with the app
+
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# User Model
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    session_token = db.Column(db.String(255), nullable=True)  # 👈 Add this line
+# Import admin_bp after db is initialized to avoid circular import
+from admin.routes import admin_bp
+app.register_blueprint(admin_bp, url_prefix='/admin')
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -89,10 +96,14 @@ def register():
         login_user(new_user)
         session['session_token'] = new_user.session_token
 
-        flash("Registration successful!", "success")
         return redirect(url_for('dashboard'))
 
     return render_template('register.html')
+
+
+# Define your admin credentials (or fetch from config / DB later)
+ADMIN_EMAIL = "admin@example.com"
+ADMIN_PASSWORD = "admin123"
 
 # Login Route
 @app.route('/login', methods=['GET', 'POST'])
@@ -101,9 +112,19 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
+        # Check if admin login
+        if email == ADMIN_EMAIL and password == ADMIN_PASSWORD:
+            session.pop('_flashes', None)  # Clear old flashes
+
+            # Set admin login session flag
+            session['admin_logged_in'] = True
+
+           
+            return redirect(url_for('admin.dashboard'))  # Redirect to admin dashboard
+
+        # Else, normal user login
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
-            # Clear old flash messages before adding a new one
             session.pop('_flashes', None)
 
             user.session_token = str(uuid.uuid4())
@@ -113,14 +134,15 @@ def login():
             login_user(user)
             session['session_token'] = user.session_token
 
-            flash("Logged in successfully.", "success")
+           
             return redirect(url_for('dashboard'))
 
-        # Clear old flashes to avoid duplicate messages for failed login
         session.pop('_flashes', None)
         flash("Invalid credentials", "danger")
 
     return render_template('login.html')
+
+
 
 
 # Dashboard
@@ -150,8 +172,12 @@ def update_profile():
     current_user.email = new_email
     db.session.commit()
 
-    flash("Profile updated successfully!", "success")
+   
     return redirect(url_for('profile'))
+
+
+
+
 
 # Logout
 @app.route('/logout', methods=['POST'])
@@ -160,15 +186,97 @@ def logout():
     # Clear old flashes
     session.pop('_flashes', None)
 
-    current_user.session_token = None
-    db.session.commit()
+    # Clear admin login session flag if it exists
+    session.pop('admin_logged_in', None)
+
+    # Clear current user session token (for normal users)
+    if current_user.is_authenticated:
+        current_user.session_token = None
+        db.session.commit()
+
+    # Log out the user
     logout_user()
+
+    # Clear session token from session
     session.pop('session_token', None)
 
     flash("Logged out successfully.", "info")
     return redirect(url_for('login'))
 
 
+
+
+@app.route("/settings")
+@login_required  # better to protect settings page
+def settings():
+    return render_template("settings.html")
+
+@app.route('/change_password', methods=['POST'])
+@login_required
+def change_password():
+    current_password = request.form.get('current_password')
+    new_password = request.form.get('new_password')
+    confirm_password = request.form.get('confirm_password')
+
+    errors = {}
+
+    # Validate current password - use current_user.password (not password_hash)
+    if not check_password_hash(current_user.password, current_password):
+        errors['current_password'] = "Current password is incorrect."
+
+    # Validate new password length
+    if len(new_password) < 6:
+        errors['new_password'] = "New password must be at least 6 characters."
+
+    # Validate password confirmation
+    if new_password != confirm_password:
+        errors['confirm_password'] = "New passwords do not match."
+
+    if errors:
+       return render_template('settings.html', errors=errors, form_data=request.form, open_form='change_password')
+
+
+    # No errors, update password
+    current_user.password = generate_password_hash(new_password)
+    db.session.commit()
+
+    flash("Password updated successfully!", "success")
+    return redirect(url_for('settings'))
+
+@app.route('/submit_feedback', methods=['POST'])
+@login_required
+def submit_feedback():
+    name = request.form.get('name')
+    message = request.form.get('message')
+
+    errors = {}
+
+    if not name or len(name.strip()) == 0:
+        errors['name'] = "Name is required."
+
+    if not message or len(message.strip()) == 0:
+        errors['message'] = "Feedback message is required."
+
+    if errors:
+       return render_template('settings.html', errors=errors, form_data=request.form, open_form='feedback')
+
+
+    # Save feedback to database
+    new_feedback = Feedback(name=name, message=message)
+    db.session.add(new_feedback)
+    db.session.commit()
+
+    flash("Thank you for your feedback!", "success")
+    return redirect(url_for('settings'))
+
+
+
+
+
+@app.route('/syllabus')
+@login_required
+def syllabus():
+    return render_template("syllabus.html")
 
 
 
@@ -305,15 +413,25 @@ def access_syllabus(syllabus_id):
 
 
 
-API_KEY = '231273fc510f4c319ee8e064eeefd15e'
+API_KEY = 'kjh'
 BASE_URL = 'https://newsapi.org/v2'
 
 bookmarks = []
 categories = ['general', 'business', 'entertainment', 'health', 'science', 'sports', 'technology']
 regions = {'india': 'in', 'world': 'us'}
 
-def get_news(endpoint, params, limit=12): 
+# Keyword mapping for Indian news categories (used with 'everything' endpoint)
+category_keywords = {
+    'general': 'India',
+    'business': 'India business OR economy OR market',
+    'entertainment': 'India entertainment OR Bollywood OR movies',
+    'health': 'India health OR medicine OR healthcare',
+    'science': 'India science OR research OR technology',
+    'sports': 'India sports OR cricket OR football',
+    'technology': 'India technology OR gadgets OR IT',
+}
 
+def get_news(endpoint, params, limit=12):
     """Generic function to fetch news with fallback and filtering"""
     try:
         response = requests.get(f"{BASE_URL}/{endpoint}", params=params, timeout=5)
@@ -321,17 +439,30 @@ def get_news(endpoint, params, limit=12):
             print("API Error:", response.json().get('message'))
             return []
         articles = response.json().get('articles', [])
+        # Sort articles preferring those with images
         return sorted(articles, key=lambda x: x.get('urlToImage') is not None, reverse=True)[:limit]
     except Exception as e:
         print("Fetch failed:", str(e))
         return []
 
 def get_top_headlines(category='general', country='in', limit=12):
-    """Get top headlines for a category & country"""
+    """Get top headlines for a category & country (used for world news)"""
     params = {'apiKey': API_KEY, 'pageSize': limit, 'country': country}
     if category and category != 'general':
         params['category'] = category
     return get_news('top-headlines', params, limit)
+
+def get_india_news(category='general', limit=12):
+    """Get Indian news with category keywords using everything endpoint"""
+    query = category_keywords.get(category, 'India')
+    params = {
+        'apiKey': API_KEY,
+        'q': query,
+        'language': 'en',
+        'pageSize': limit,
+        'sortBy': 'publishedAt'
+    }
+    return get_news('everything', params, limit)
 
 @app.route('/current_affairs')
 @login_required
@@ -345,9 +476,15 @@ def news_view(region, category):
     if region not in regions or category not in categories:
         return redirect(url_for('news_view', region='india', category='general'))
 
-    country_code = regions[region]
-    top_headlines = get_top_headlines(category, country_code, limit=5)
-    news_data = get_top_headlines(category, country_code, limit=12)
+    if region == 'india':
+        # Use everything endpoint with keywords for India
+        news_data = get_india_news(category, limit=12)
+        top_headlines = news_data[:5]
+    else:
+        # Use top-headlines endpoint for other regions (like world)
+        country_code = regions[region]
+        top_headlines = get_top_headlines(category, country_code, limit=5)
+        news_data = get_top_headlines(category, country_code, limit=12)
 
     return render_template(
         'CA_index.html',
@@ -359,7 +496,7 @@ def news_view(region, category):
     )
 
 @app.route('/bookmark', methods=['POST'])
-
+@login_required
 def bookmark():
     article = {
         'title': request.form['title'],
@@ -383,7 +520,6 @@ def remove_bookmark():
     url = request.form['url']
     bookmarks = [b for b in bookmarks if b['url'] != url]
     return redirect(url_for('show_bookmarks'))
-
 
 
 
@@ -441,20 +577,10 @@ def static_gk():
 
 
 
-@app.route('/syllabus')
-@login_required
-def syllabus():
-    return render_template("syllabus.html")
 
 
-
-
-
-
-
-with open("NCERTdata.json") as f:
+with open("data/NCERTdata.json") as f:
     ncert_data = json.load(f)
-
 
 
 @app.route("/ncert")
@@ -626,72 +752,22 @@ def pyq_final(exam_type, paper_type, year, sub_paper_type=None):
 
 
 
-# OpenAI API key
-# openai.api_key = 'ca5b3974b4fe4f05a29125b28554c1f3'
 
-csat_topics = [
-    "logical-reasoning", "data-interpretation", "reading-comprehension",
-    "maths-basics", "puzzle-solving", "syllogisms", "coding-decoding",
-    "direction-sense", "blood-relations", "time-and-work"
-]
+@app.route("/csat")
+@login_required
+def csat():
+    data_path = os.path.join("data", "csat_notes.json")
+    with open(data_path) as f:
+        csat_data = json.load(f)
+    return render_template("csat.html", csat_data=csat_data)
 
-# AI-based descriptive generator
-def generate_descriptive_notes(topic):
-    return {
-        "intro": f"Understanding the core concepts of {topic.replace('-', ' ')} is crucial for CSAT.",
-        "points": [
-            f"Definition and scope of {topic.replace('-', ' ')}.",
-            f"Basic techniques to solve {topic.replace('-', ' ')} problems.",
-            f"Common pitfalls in {topic.replace('-', ' ')} questions.",
-            f"Tips and tricks to improve speed and accuracy."
-        ],
-        "formulas": [
-            f"{topic.title()} Formula #1: Example formula for {topic.replace('-', ' ')} problems.",
-            f"{topic.title()} Formula #2: Example formula for {topic.replace('-', ' ')} problems."
-        ]
-    }
+@app.route("/get_csat_notes")
+def get_csat_notes():
+    data_path = os.path.join("data", "csat_notes.json")
+    with open(data_path) as f:
+        return jsonify(json.load(f))
 
-# AI-based MCQ generator
-def generate_mcqs(topic):
-    mcqs = []
-    for i in range(10):
-        options = [f"Option A{i}", f"Option B{i}", f"Option C{i}", f"Option D{i}"]
-        answer = random.choice(options)
-        mcqs.append({
-            "question": f"What is a basic concept related to {topic.replace('-', ' ')} #{i+1}?",
-            "options": options,
-            "answer": answer
-        })
-    return mcqs
 
-@app.route("/csat-practice")
-def csat_practice():
-    return render_template("csat_practice.html", topics=csat_topics)
-
-@app.route("/csat-topic")
-def csat_topic():
-    topic = request.args.get("topic")
-    return render_template("csat_topic_options.html", topic=topic)
-
-@app.route("/csat-notes/<topic>")
-def csat_notes(topic):
-    data = generate_descriptive_notes(topic)
-    return render_template("csat_notes.html", topic=topic, data=data)
-
-@app.route("/csat-test/<topic>", methods=["GET", "POST"])
-def csat_test(topic):
-    if request.method == "POST":
-        score = 0
-        mcqs = session.get("mcqs", [])
-        for i, q in enumerate(mcqs):
-            user_ans = request.form.get(f"q{i}")
-            if user_ans == q['answer']:
-                score += 1
-        return render_template("csat_result.html", score=score, total=len(mcqs), mcqs=mcqs)
-    else:
-        mcqs = generate_mcqs(topic)
-        session['mcqs'] = mcqs
-        return render_template("csat_test.html", topic=topic, mcqs=mcqs)
 
 
 
@@ -736,14 +812,89 @@ def interview_videos():
     return render_template('interview_videos.html', videos=videos)
 
 
-@app.route('/daf_videos')
+@app.route('/interview/daf')
 @login_required
-def daf_videos():
-    with open('data/interview_DAF_videos.json', 'r') as f:
+def interview_daf():
+    # Load DAF videos
+    with open('data/interview_DAF_videos.json', 'r', encoding='utf-8') as f:
         videos = json.load(f)
-    return render_template('interview_DAF.html', videos=videos['DAF_Preparation'])
+
+    # Load Sample PDFs
+    pdf_folder_name = 'DAF_sample_pdfs'  # Folder inside /static/
+    pdf_folder = os.path.join(app.static_folder, pdf_folder_name)
+    sample_pdfs = [f for f in os.listdir(pdf_folder) if f.lower().endswith('.pdf')]
+
+    print("Sample PDFs found:", sample_pdfs)  # Debug output
+
+    # Render template with BOTH videos and PDFs
+    return render_template(
+        'interview_DAF.html',
+        videos=videos['DAF_Preparation'],
+        sample_pdfs=sample_pdfs,
+        pdf_folder_name=pdf_folder_name
+    )
 
 
+
+
+
+
+
+# Disable SSL warnings (safe since it's UPSC site)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+def fetch_updates():
+    url = 'https://upsc.gov.in/whats-new'
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    
+    try:
+        response = requests.get(url, headers=headers, verify=False)
+        response.raise_for_status()  # Raise an error for bad status codes
+    except requests.exceptions.RequestException as e:
+        print("Error fetching UPSC updates:", e)
+        return []
+
+    soup = BeautifulSoup(response.content, 'html.parser')
+    updates = []
+
+    for item in soup.select('div.view-content div.views-row'):
+        title_tag = item.find('a')
+        if title_tag:
+            title = title_tag.get_text(strip=True)
+            link = title_tag['href']
+            if not link.startswith('http'):
+                link = 'https://upsc.gov.in' + link
+            updates.append({'title': title, 'link': link})
+    return updates
+
+def categorize_updates(updates):
+    categories = {
+        'Results': [],
+        'Admit Cards': [],
+        'Exam Schedules': [],
+        'Notifications': [],
+        'Others': []
+    }
+    for update in updates:
+        title = update['title'].lower()
+        if 'result' in title:
+            categories['Results'].append(update)
+        elif 'admit card' in title or 'call letter' in title:
+            categories['Admit Cards'].append(update)
+        elif 'schedule' in title or 'timetable' in title:
+            categories['Exam Schedules'].append(update)
+        elif 'notification' in title:
+            categories['Notifications'].append(update)
+        else:
+            categories['Others'].append(update)
+    return categories
+
+@app.route('/latest-updates')
+@login_required
+def latest_updates():
+    updates = fetch_updates()
+    categorized_updates = categorize_updates(updates)
+    return render_template('latest_updates.html', updates=updates, categorized_updates=categorized_updates)
 
 
 
