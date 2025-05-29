@@ -422,7 +422,7 @@ def access_syllabus(syllabus_id):
 
 
 
-API_KEY = 'fgg'
+API_KEY = 'ad6c63ddf55d42f5b0cb911852e4ea15'
 BASE_URL = 'https://newsapi.org/v2'
 
 bookmarks = []
