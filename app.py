@@ -1,10 +1,9 @@
 import os
-import random
 import json
 import requests
 import mysql.connector
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime
 import uuid
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -13,25 +12,29 @@ from flask import (
     Flask, flash, render_template, request, redirect,
     session, url_for, jsonify, send_file, get_flashed_messages
 )
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
-    LoginManager, UserMixin, login_user, login_required,
+    LoginManager, login_user, login_required,
     logout_user, current_user
 )
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
-from db_config import get_connection
+
 from extensions import db
 import urllib3
 from models import User, Feedback   # import models here
+from db_config import get_db_connection
 
 
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24).hex()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:harharmahadev@localhost/upsc_app'
+app.secret_key = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+
+
+
+
 
 db.init_app(app)   # <-- initialize db with the app
 
@@ -206,10 +209,19 @@ def logout():
 
 
 
+
+
+
+
+
+
+
+
 @app.route("/settings")
 @login_required  # better to protect settings page
 def settings():
     return render_template("settings.html")
+
 
 @app.route('/change_password', methods=['POST'])
 @login_required
@@ -220,28 +232,25 @@ def change_password():
 
     errors = {}
 
-    # Validate current password - use current_user.password (not password_hash)
     if not check_password_hash(current_user.password, current_password):
         errors['current_password'] = "Current password is incorrect."
 
-    # Validate new password length
     if len(new_password) < 6:
         errors['new_password'] = "New password must be at least 6 characters."
 
-    # Validate password confirmation
     if new_password != confirm_password:
         errors['confirm_password'] = "New passwords do not match."
 
     if errors:
-       return render_template('settings.html', errors=errors, form_data=request.form, open_form='change_password')
+        return jsonify(success=False, errors=errors)
 
-
-    # No errors, update password
     current_user.password = generate_password_hash(new_password)
     db.session.commit()
 
-    flash("Password updated successfully!", "success")
-    return redirect(url_for('settings'))
+    return jsonify(success=True, message="Password updated successfully.")
+
+
+
 
 @app.route('/submit_feedback', methods=['POST'])
 @login_required
@@ -300,7 +309,7 @@ def syllabus_select_paper_type():
     if not exam_type:
         return redirect(url_for('syllabus_main'))
     
-    conn = get_connection()
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
     # Get unique paper types available for this exam type
@@ -327,7 +336,7 @@ def syllabus_show_syllabus():
     if not exam_type or not paper_type:
         return redirect(url_for('syllabus_main'))
     
-    conn = get_connection()
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
     query = """
@@ -349,7 +358,7 @@ def syllabus_show_syllabus():
 @login_required
 def access_syllabus(syllabus_id):
     """Access the syllabus PDF file - either download it or redirect to URL"""
-    conn = get_connection()
+    conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
     query = "SELECT link, exam_type, paper_type, year FROM syllabus WHERE id = %s"
@@ -413,7 +422,7 @@ def access_syllabus(syllabus_id):
 
 
 
-API_KEY = 'kjh'
+API_KEY = 'fgg'
 BASE_URL = 'https://newsapi.org/v2'
 
 bookmarks = []
@@ -620,16 +629,9 @@ def book_select(selected_class, subject):
 
 
 
-# Database configuration
-db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'harharmahadev',
-    'database': 'upsc_app'
-}
 
-def get_db_connection():
-    return mysql.connector.connect(**db_config)
+
+
 
 # 1. Select Exam Type
 @app.route('/pyq_examtype')

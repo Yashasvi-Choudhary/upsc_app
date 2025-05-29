@@ -3,78 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <title>{% block title %}UPSC Aspirant{% endblock %}</title>
-
     {% block styles %}{% endblock %}
   </head>
 
   <body class="bg-white text-black">
     <!-- Top Navbar -->
     <header
-      class="fixed top-0 w-full bg-teal-500 flex items-center justify-between px-8 shadow z-50 h-16"
+      class="fixed top-0 w-full bg-teal-500 flex items-center px-4 sm:px-8 shadow z-50 h-16"
     >
-      <img
-        src="/static/logo3.webp"
-        alt="UPSC Logo"
-        class="h-full object-contain"
-      />
-      <h1 class="text-4xl text-white font-extrabold tracking-wide font-serif">
+      <!-- Left: Logo -->
+      <a href="{{ url_for('home') }}" class="flex items-center">
+        <img
+          src="/static/logo.webp"
+          alt="UPSC Logo"
+          class="h-12 sm:h-16 object-contain"
+        />
+      </a>
+
+      <!-- Center: Heading -->
+      <h1
+        class="flex-grow text-center text-white font-extrabold text-2xl sm:text-3xl tracking-wide font-serif"
+      >
         UPSC Aspirant
       </h1>
 
-      <!-- Profile Button -->
+      <!-- Right: Profile -->
       <a
         href="{{ url_for('profile') }}"
-        class="flex flex-col items-center p-2 rounded"
+        class="flex items-center p-1 sm:p-2 rounded text-white hover:bg-teal-600 transition"
       >
         <img
           src="https://img.icons8.com/ios-glyphs/30/ffffff/user--v1.png"
           alt="User"
-          class="h-9 w-9"
+          class="h-8 w-8"
         />
-        <span class="text-xs mt-1 font-bold text-white">Profile</span>
       </a>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main class="mt-20 pb-32 px-2">{% block content %}{% endblock %}</main>
 
     <!-- Bottom Footer -->
     <footer
-      class="fixed bottom-0 w-full bg-neutral-200/60 backdrop-blur shadow flex justify-around py-2 z-50"
+      class="fixed bottom-0 w-full bg-neutral-200/60 backdrop-blur shadow z-50 py-2"
     >
-      <a href="{{ url_for('home') }}">
-        <div class="flex flex-col items-center">
-          <img src="https://img.icons8.com/ios-filled/24/home.png" />
-          <span class="text-xs">Home</span>
-        </div>
-      </a>
-      <a href="">
-        <div class="flex flex-col items-center">
-          <img src="https://img.icons8.com/ios-filled/24/search--v1.png" />
-          <span class="text-xs">Search</span>
-        </div>
-      </a>
-      <a href="{{ url_for('show_bookmarks') }}">
-        <div class="flex flex-col items-center">
-          <img src="https://img.icons8.com/ios-filled/24/bookmark-ribbon.png" />
-          <span class="text-xs">Bookmark</span>
-        </div>
-      </a>
-      <a href="{{ url_for('settings') }}">
-        <div class="flex flex-col items-center">
-          <img src="https://img.icons8.com/ios-filled/24/settings.png" />
-          <span class="text-xs">Settings</span>
-        </div>
-      </a>
+      <div class="flex justify-around text-center text-xs">
+        {% set links = [ {'url': url_for('home'), 'icon': 'home', 'label':
+        'Home'}, {'url': url_for('show_bookmarks'), 'icon': 'bookmark-ribbon',
+        'label': 'Bookmark'}, {'url': url_for('settings'), 'icon': 'settings',
+        'label': 'Settings'} ] %} {% for link in links %}
+        <a href="{{ link.url }}" class="flex flex-col items-center">
+          <img src="https://img.icons8.com/ios-filled/24/{{ link.icon }}.png" />
+          <span>{{ link.label }}</span>
+        </a>
+        {% endfor %}
+      </div>
     </footer>
   </body>
 </html>

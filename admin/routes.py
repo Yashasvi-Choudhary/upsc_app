@@ -37,8 +37,8 @@ def dashboard():
 
 @admin_bp.route('/logout')
 def logout():
-    session.pop('admin_logged_in', None)
-    return redirect(url_for('admin.login'))
+    session.clear() 
+    return redirect(url_for('admin.login'))   # Use function name, not template filename
 
 @admin_bp.route('/manage_users')
 @admin_login_required

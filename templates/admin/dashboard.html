@@ -7,27 +7,31 @@
   </head>
   <body class="bg-gray-100 min-h-screen flex flex-col">
     <!-- Header -->
-    <header class="bg-white shadow p-4 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-800">Admin Dashboard</h1>
-      <a href="/logout" class="text-red-500 hover:text-red-700 font-semibold"
+    <header class="bg-white shadow p-6 flex justify-between items-center">
+      <h1 class="text-3xl font-extrabold text-gray-900">Admin Dashboard</h1>
+      <a
+        href="{{ url_for('admin.logout') }}"
+        class="text-red-600 hover:text-red-800 font-semibold transition-colors duration-300"
         >Logout</a
       >
     </header>
 
     <!-- Dashboard Content -->
-    <main class="flex-1 flex justify-center items-center min-h-screen p-6">
+    <main class="flex-1 flex justify-center items-start pt-32 pb-12 px-6">
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-10 max-w-7xl w-full"
       >
         <!-- Manage Users -->
         <a
           href="/admin/manage_users"
-          class="block p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-transparent hover:border-blue-500"
           role="button"
           aria-label="Manage Users"
+          class="block p-10 bg-white rounded-3xl shadow-lg border-2 border-transparent hover:border-blue-500 hover:bg-blue-50 transform hover:scale-105 transition-all duration-300 cursor-pointer"
         >
-          <h2 class="text-xl font-semibold text-gray-800 mb-2">Manage Users</h2>
-          <p class="text-gray-600 leading-relaxed">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-3">
+            Manage Users
+          </h2>
+          <p class="text-gray-700 leading-relaxed text-lg">
             View, analyze and manage registered users.
           </p>
         </a>
@@ -35,12 +39,12 @@
         <!-- Manage PYQs -->
         <a
           href="/admin/manage_pyqs"
-          class="block p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-transparent hover:border-green-500"
           role="button"
           aria-label="Manage PYQs"
+          class="block p-10 bg-white rounded-3xl shadow-lg border-2 border-transparent hover:border-green-500 hover:bg-green-50 transform hover:scale-105 transition-all duration-300 cursor-pointer"
         >
-          <h2 class="text-xl font-semibold text-gray-800 mb-2">Manage PYQs</h2>
-          <p class="text-gray-600 leading-relaxed">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-3">Manage PYQs</h2>
+          <p class="text-gray-700 leading-relaxed text-lg">
             Add, edit, or remove previous year question papers.
           </p>
         </a>
@@ -48,29 +52,32 @@
         <!-- Manage Syllabus -->
         <a
           href="/admin/manage_syllabus"
-          class="block p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-transparent hover:border-purple-500"
           role="button"
           aria-label="Manage Syllabus"
+          class="block p-10 bg-white rounded-3xl shadow-lg border-2 border-transparent hover:border-purple-500 hover:bg-purple-50 transform hover:scale-105 transition-all duration-300 cursor-pointer"
         >
-          <h2 class="text-xl font-semibold text-gray-800 mb-2">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-3">
             Manage Syllabus
           </h2>
-          <p class="text-gray-600 leading-relaxed">
+          <p class="text-gray-700 leading-relaxed text-lg">
             Update and maintain the syllabus content.
           </p>
         </a>
+
         <!-- Manage Feedbacks -->
-<a
-  href="/admin/manage_feedbacks"
-  class="block p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-transparent hover:border-yellow-500"
-  role="button"
-  aria-label="Manage Feedbacks"
->
-  <h2 class="text-xl font-semibold text-gray-800 mb-2">Manage Feedbacks</h2>
-  <p class="text-gray-600 leading-relaxed">
-    View and manage user feedback submissions.
-  </p>
-</a>
+        <a
+          href="/admin/manage_feedbacks"
+          role="button"
+          aria-label="Manage Feedbacks"
+          class="block p-10 bg-white rounded-3xl shadow-lg border-2 border-transparent hover:border-yellow-500 hover:bg-yellow-50 transform hover:scale-105 transition-all duration-300 cursor-pointer"
+        >
+          <h2 class="text-2xl font-semibold text-gray-900 mb-3">
+            Manage Feedbacks
+          </h2>
+          <p class="text-gray-700 leading-relaxed text-lg">
+            View and manage user feedback submissions.
+          </p>
+        </a>
       </div>
     </main>
   </body>

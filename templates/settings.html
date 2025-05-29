@@ -77,91 +77,7 @@
       </a>
     </section>
 
-    <!-- Change Password Section -->
-    <section id="changePassword" class="space-y-4">
-      <button
-        id="togglePasswordBtn"
-        class="w-full text-left text-xl font-semibold bg-gray-200 dark:bg-gray-700 rounded px-4 py-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300 flex justify-between items-center"
-      >
-        Change Password
-        <svg
-          id="passwordArrow"
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6 transform transition-transform duration-300 {% if open_form == 'change_password' %}rotate-180{% endif %}"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
-      <form
-        id="passwordForm"
-        method="POST"
-        action="{{ url_for('change_password') }}"
-        class="space-y-4 bg-gray-50 dark:bg-gray-900 p-6 rounded shadow-inner {% if open_form != 'change_password' %}hidden{% endif %}"
-      >
-        <div>
-          <label for="current_password" class="block mb-1 font-medium"
-            >Current Password</label
-          >
-          <input
-            type="password"
-            id="current_password"
-            name="current_password"
-            required
-            class="w-full p-2 border border-gray-300 rounded"
-          />
-          {% if errors and errors.current_password %}
-          <p class="text-red-600 text-sm mt-1">{{ errors.current_password }}</p>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="new_password" class="block mb-1 font-medium"
-            >New Password</label
-          >
-          <input
-            type="password"
-            id="new_password"
-            name="new_password"
-            required
-            class="w-full p-2 border border-gray-300 rounded"
-          />
-          {% if errors and errors.new_password %}
-          <p class="text-red-600 text-sm mt-1">{{ errors.new_password }}</p>
-          {% endif %}
-        </div>
-
-        <div>
-          <label for="confirm_password" class="block mb-1 font-medium"
-            >Confirm New Password</label
-          >
-          <input
-            type="password"
-            id="confirm_password"
-            name="confirm_password"
-            required
-            class="w-full p-2 border border-gray-300 rounded"
-          />
-          {% if errors and errors.confirm_password %}
-          <p class="text-red-600 text-sm mt-1">{{ errors.confirm_password }}</p>
-          {% endif %}
-        </div>
-
-        <button
-          type="submit"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded"
-        >
-          Update Password
-        </button>
-      </form>
-    </section>
+    
 
     <!-- Feedback Section -->
     <section id="feedback" class="space-y-4">
@@ -257,20 +173,7 @@
 
 <!-- Toggle Script -->
 <script>
-  // Toggle Change Password form
-  const togglePasswordBtn = document.getElementById("togglePasswordBtn");
-  const passwordForm = document.getElementById("passwordForm");
-  const passwordArrow = document.getElementById("passwordArrow");
-
-  togglePasswordBtn.addEventListener("click", () => {
-    if (passwordForm.classList.contains("hidden")) {
-      passwordForm.classList.remove("hidden");
-      passwordArrow.classList.add("rotate-180");
-    } else {
-      passwordForm.classList.add("hidden");
-      passwordArrow.classList.remove("rotate-180");
-    }
-  });
+ 
 
   // Toggle Feedback form
   const toggleFeedbackBtn = document.getElementById("toggleFeedbackBtn");

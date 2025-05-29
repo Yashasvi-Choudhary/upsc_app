@@ -28,5 +28,24 @@
       "title": "Art & Culture",
       "link": "https://www.clearias.com/art-and-culture/"
     }
+  ],
+  "Important Days & Themes": [
+    {
+      "title": "Important Days & Themes ",
+      "link": "https://www.un.org/en/observances/list-days-weeks"
+    }
+  ],
+  "Science & Technology": [
+    {
+      "title": "Science & Technology",
+      "link": "https://vajiramandravi.com/upsc-exam/science-and-technology-notes/"
+    }
+  ],
+ 
+  "Indian States": [
+    {
+      "title": "Indian States",
+      "link": "https://gkgigs.com/state-symbols-of-indian-states/"
+    }
   ]
 }

@@ -1,101 +1,34 @@
-<!-- templates/dashboard.html -->
 {% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
 %} {% block content %}
+
 <div class="flex justify-center mt-36">
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-10">
-    <a href="{{ url_for('current_affairs') }}" class="block">
+    {% set features = [ {"name": "Current Affairs", "url":
+    url_for('current_affairs'), "color": "bg-yellow-300", "icon": "news"},
+    {"name": "Syllabus", "url": url_for('syllabus_select_exam_type'), "color":
+    "bg-blue-300", "icon": "clipboard"}, {"name": "PYQs", "url":
+    url_for('pyq_examtype'), "color": "bg-rose-300", "icon": "open-book--v1"},
+    {"name": "NCERT Books", "url": url_for('class_select'), "color":
+    "bg-green-400", "icon": "books"}, {"name": "Static GK", "url": "static_gk",
+    "color": "bg-fuchsia-300", "icon": "light-on"}, {"name": "CSAT Practice",
+    "url": url_for('csat'), "color": "bg-violet-300", "icon": "book-shelf"},
+    {"name": "Interview Prep", "url": "interview_index", "color":
+    "bg-orange-300", "icon": "microphone"}, {"name": "Latest Updates", "url":
+    url_for('latest_updates'), "color": "bg-cyan-300", "icon":
+    "appointment-reminders--v1"} ] %} {% for feature in features %}
+    <a href="{{ feature.url }}" class="block">
       <div
-        class="bg-yellow-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img src="https://img.icons8.com/ios-filled/60/news.png" class="mb-3" />
-        <p class="font-semibold text-base">Current Affairs</p>
-      </div>
-    </a>
-
-    <a href="{{ url_for('syllabus_select_exam_type') }}" class="block">
-      <div
-        class="bg-blue-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/clipboard.png"
-          class="mb-3"
-        />
-        <p class="font-semibold text-base">Syllabus</p>
-      </div>
-    </a>
-
-    <a href="{{ url_for('pyq_examtype') }}" class="block">
-      <div
-        class="bg-red-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
+        class="{{ feature.color }} p-4 rounded-2xl shadow-md text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 hover:shadow-lg transition-all"
       >
         <img
-          src="https://img.icons8.com/ios-filled/60/open-book--v1.png"
+          src="https://img.icons8.com/ios-filled/60/{{ feature.icon }}.png"
           class="mb-3"
         />
-        <p class="font-semibold text-base">PYQs</p>
+        <p class="font-semibold text-base">{{ feature.name }}</p>
       </div>
     </a>
-
-    <a href="{{ url_for('class_select') }}" class="block">
-      <div
-        class="bg-green-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/books.png"
-          class="mb-3"
-        />
-        <p class="font-semibold text-base">NCERT Books</p>
-      </div>
-    </a>
-
-    <a href="static_gk" class="block">
-      <div
-        class="bg-fuchsia-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/light-on.png"
-          class="mb-3"
-        />
-        <p class="font-semibold text-base">Static GK</p>
-      </div>
-    </a>
-
-    <a href="{{ url_for('csat') }}" class="block">
-      <div
-        class="bg-violet-400 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/book-shelf.png"
-          class="mb-3"
-        />
-        <p class="font-semibold text-base">CSAT Practice</p>
-      </div>
-    </a>
-
-    <a href="interview_index" class="block">
-      <div
-        class="bg-orange-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/microphone.png"
-          class="mb-3"
-        />
-        <p class="font-semibold text-base">Interview Prep</p>
-      </div>
-    </a>
-
-    <a href="{{ url_for('latest_updates') }}" class="block">
-      <div
-        class="bg-cyan-300 p-4 rounded-2xl shadow text-center w-[220px] h-[220px] flex flex-col items-center justify-center hover:scale-105 transition"
-      >
-        <img
-          src="https://img.icons8.com/ios-filled/60/appointment-reminders--v1.png"
-          class="mb-3"
-        />
-
-        <p class="font-semibold text-base">Latest Updates</p>
-      </div>
-    </a>
+    {% endfor %}
   </div>
 </div>
+
 {% endblock %}
