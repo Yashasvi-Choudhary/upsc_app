@@ -29,7 +29,7 @@ from db_config import get_db_connection
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY')
+app.secret_key = os.environ.get("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
 
 
@@ -407,22 +407,11 @@ def access_syllabus(syllabus_id):
 
 
 
-# API_KEY = "ad6c63ddf55d42f5b0cb911852e4ea15"  # Replace with your API Key
-# NEWS_URL =" https://newsapi.org/v2/top-headlines?country=in&category=general&apiKey=ad6c63ddf55d42f5b0cb911852e4ea15"
-
-
-# NEWS_API_KEY = 'ca5b3974b4fe4f05a29125b28554c1f3'  # Replace with your NewsAPI key
-
-
-# ✅ Direct API key assignment (instead of os.getenv)
-# NEWS_API_KEY = '231273fc510f4c319ee8e064eeefd15e'
-# NEWS_API_URL = 'https://newsapi.org/v2/top-headlines'
 
 
 
 
-
-API_KEY = 'ad6c63ddf55d42f5b0cb911852e4ea15'
+API_KEY = os.environ.get("API_KEY")
 BASE_URL = 'https://newsapi.org/v2'
 
 bookmarks = []
