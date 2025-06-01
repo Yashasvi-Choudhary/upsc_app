@@ -1,9 +1,9 @@
 {
   "Logical Reasoning": {
     "Syllogisms": "https://www.upscprep.com/syllogism-logical-reasoning-upsc-csat/",
-    "Seating Arrangements": "https://byjus.com/govt-exams/seating-arrangement-logical-reasoning/",
-    "Coding-Decoding": "https://unacademy.com/content/nta-ugc/study-material/logical-reasoning/coding-and-decoding-in-logical-reasoning/",
-    "Blood Relations": "https://byjus.com/govt-exams/blood-relations-logical-reasoning/"
+    "Seating Arrangements": "https://www.studentstutorial.com/reasoning/reasoning-seating-arrangement.php",
+    "Coding-Decoding": "https://www.simplilearn.com/tutorials/programming-tutorial/coding-decoding-reasoning",
+    "Blood Relations": "https://www.geeksforgeeks.org/blood-relation-reasoning/"
   },
   "Basic Numeracy": {
     "Simplification & Approximation": "https://byjus.com/govt-exams/simplification-approximation-questions/",
@@ -14,12 +14,14 @@
   },
   "Reading Comprehension": {
     "Strategies for quick comprehension": "https://www.upscprep.com/csat-english-reading-comprehension/",
-    "Types of questions (main idea, inference)": ""
+    "Main Idea Questions": "https://readingcomprehensionstrategies.org/main-idea/#free-reading-comprehension-video",
+    "Tone/Authors Attitude": "https://www.hitbullseye.com/Reading-Comprehension-Tone.php",
+    "Vocabulary in Context": "https://www.teachthought.com/literacy/context-clues-reading/"
   },
   "Data Interpretation": {
-    "Bar Graphs": "https://byjus.com/free-ias-prep/data-interpretation-basics/",
-    "Pie Charts": "https://byjus.com/free-ias-prep/data-interpretation-basics/",
-    "Tables": ""
+    "Bar Graphs": "https://www.geeksforgeeks.org/bar-graph-questions-with-solutions/",
+    "Pie Charts": "https://www.indiabix.com/data-interpretation/pie-charts/",
+    "Tables": "https://www.indiabix.com/data-interpretation/table-charts/"
   },
   "Advanced Numeracy": {
     "Simple and Compound Interest (detailed)": "https://byjus.com/maths/compound-interest/",

@@ -1,118 +1,89 @@
-{% extends "base.html" %} {% block title %}CSAT Notes - UPSC Aspirant{% endblock
-%} {% block styles %}
-<style>
-  .topic-card {
-    width: 30vw;
-    max-width: 280px;
-    min-width: 220px;
-    height: calc(30vw * 0.65);
-    max-height: 180px;
-    min-height: 140px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 0 auto;
-  }
-  .topic-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-  .topic-icon {
-    font-size: 2.2rem;
-    margin-bottom: 0.6rem;
-  }
-  .topic-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-align: center;
-  }
-</style>
+{% extends 'base.html' %} {% block content %}
+<div class="max-w-3xl mx-auto px-4 py-6">
+  <!-- Title & Back Button -->
+  <div class="flex items-center justify-center mb-6 relative">
+    <!-- Back Button -->
+    <a
+      href="{{ url_for('dashboard') }}"
+      class="absolute left-0 bg-purple-100 text-purple-700 px-4 py-2 rounded-xl shadow hover:bg-purple-200 transition"
+    >
+      <i class="fas fa-arrow-left"></i>
+    </a>
 
-<div class="container mx-auto px-4 py-32">
-  <!-- Header with back button -->
-  <div class="flex items-center justify-between flex-wrap mb-10">
-    <div class="flex items-center space-x-16">
-      <a
-        href="/dashboard"
-        class="w-12 h-12 bg-white text-purple-600 hover:bg-purple-200 rounded-full flex items-center justify-center shadow transition-colors"
-        title="Back"
-      >
-        <i class="fas fa-arrow-left text-xl"></i>
-      </a>
-      <h1 class="text-3xl md:text-4xl font-bold text-gray-800">CSAT Notes</h1>
-    </div>
+    <!-- Heading -->
+    <h1 class="text-3xl font-bold text-purple-700">CSAT Practice</h1>
   </div>
-
-  <!-- Category Grid -->
-  <div
-    class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-6 justify-center"
-  >
-    {% for category in csat_data %} {% set safe_id = category.lower().replace('
-    ', '_').replace('*', '').replace('.', '') %} {% set icon = "" %} {% if
-    "logical" in category.lower() %} {% set icon = "🧠" %} {% elif "numeracy" in
-    category.lower() %} {% set icon = "➗" %} {% elif "reading" in
-    category.lower() %} {% set icon = "📖" %} {% elif "data" in category.lower()
-    %} {% set icon = "📊" %} {% elif "advanced" in category.lower() %} {% set
-    icon = "📐" %} {% elif "miscellaneous" in category.lower() %} {% set icon =
-    "🧩" %} {% else %} {% set icon = "📚" %} {% endif %}
-
+  <!-- Topics List -->
+  <div class="space-y-6">
+    {% for topic, subtopics in csat_data.items() %}
     <div
-      class="topic-card bg-white rounded-xl shadow-md overflow-hidden"
-      onclick="showTopics('{{ safe_id }}')"
+      class="bg-white rounded-2xl shadow-md p-6 border border-purple-100 transition group"
     >
       <div
-        class="bg-white text-purple-900 hover:bg-purple-100 border-2 rounded-xl border-purple-300 p-5 flex flex-col items-center justify-center h-full"
+        class="flex items-center justify-between cursor-pointer"
+        onclick="toggleDropdown('{{ loop.index }}')"
       >
-        <div class="topic-icon">{{ icon }}</div>
-        <div class="topic-title">{{ category }}</div>
+        <div
+          class="flex items-center space-x-4 text-purple-800 font-semibold text-lg"
+        >
+          <i
+            class="fas fa-lightbulb text-xl group-hover:scale-110 transition-transform duration-200"
+          ></i>
+          <span>{{ topic }}</span>
+        </div>
+        <i
+          class="fas fa-chevron-down text-gray-500 transition-transform duration-300"
+          id="icon-{{ loop.index }}"
+        ></i>
+      </div>
+
+      <!-- Subtopics Dropdown -->
+      <div
+        id="dropdown-{{ loop.index }}"
+        class="hidden mt-4 transition-all duration-300 ease-in-out"
+      >
+        <div
+          class="bg-purple-50 rounded-xl p-4 space-y-3 border border-purple-200"
+        >
+          {% for subtopic, link in subtopics.items() %} {% if link %}
+          <a
+            href="{{ link }}"
+            target="_blank"
+            class="block px-4 py-2 rounded-lg bg-white hover:bg-purple-100 text-purple-700 font-medium shadow transition"
+          >
+            {{ subtopic }}
+          </a>
+          {% else %}
+          <span
+            class="block px-4 py-2 rounded-lg bg-gray-100 text-gray-500 font-medium shadow cursor-not-allowed"
+          >
+            {{ subtopic }} (Coming Soon)
+          </span>
+          {% endif %} {% endfor %}
+        </div>
       </div>
     </div>
     {% endfor %}
   </div>
-
-  <!-- Topics Content Section -->
-  {% for category, topics in csat_data.items() %} {% set safe_id =
-  category.lower().replace(' ', '_').replace('*', '').replace('.', '') %}
-  <div id="{{ safe_id }}" class="topics hidden mt-16">
-    <div class="bg-white p-6 rounded-xl shadow-xl border-l-8 border-purple-400">
-      <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">
-        {{ category }}
-      </h2>
-      <ul class="space-y-4">
-        {% for topic, url in topics.items() %} {% if url %}
-        <li>
-          <a
-            href="{{ url }}"
-            target="_blank"
-            class="block bg-purple-50 hover:bg-purple-100 border border-purple-200 hover:border-purple-400 text-purple-900 px-5 py-3 rounded-lg shadow-sm transition duration-200 font-medium"
-          >
-            📘 {{ topic }}
-          </a>
-        </li>
-        {% else %}
-        <li class="text-gray-500 italic">📄 {{ topic }} (Coming Soon)</li>
-        {% endif %} {% endfor %}
-      </ul>
-    </div>
-  </div>
-  {% endfor %}
 </div>
 
+<!-- JavaScript to Toggle Dropdowns -->
 <script>
-  function showTopics(categoryId) {
-    const topicsDivs = document.querySelectorAll(".topics");
-    topicsDivs.forEach((div) => (div.style.display = "none"));
-    const target = document.getElementById(categoryId);
-    if (target) {
-      target.style.display = "block";
-      window.scrollTo({
-        top: target.offsetTop - 80,
-        behavior: "smooth",
-      });
-    }
+  function toggleDropdown(index) {
+    const dropdown = document.getElementById(`dropdown-${index}`);
+    const icon = document.getElementById(`icon-${index}`);
+
+    // Close all other dropdowns
+    document.querySelectorAll('[id^="dropdown-"]').forEach((el) => {
+      if (el.id !== `dropdown-${index}`) el.classList.add("hidden");
+    });
+    document.querySelectorAll('[id^="icon-"]').forEach((el) => {
+      if (el.id !== `icon-${index}`) el.classList.remove("rotate-180");
+    });
+
+    // Toggle current dropdown
+    dropdown.classList.toggle("hidden");
+    icon.classList.toggle("rotate-180");
   }
 </script>
 {% endblock %}
