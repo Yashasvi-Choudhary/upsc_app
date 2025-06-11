@@ -1,12 +1,12 @@
 {% extends 'base.html' %} {% block content %}
 <div
-  class="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6 flex flex-col max-w-3xl mx-auto"
+  class="min-h-screen bg-gray-50 text-gray-900 p-6 flex flex-col max-w-3xl mx-auto"
 >
   <!-- Back Button -->
   <div>
     <a
       href="{{ url_for('dashboard') }}"
-      class="inline-flex items-center text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 font-semibold mb-6 transition-colors duration-300"
+      class="inline-flex items-center text-blue-600 hover:text-blue-800 font-semibold mb-6 transition-colors duration-300"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -41,15 +41,13 @@
   {% endif %} {% endwith %}
 
   <!-- Container -->
-  <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8 space-y-8">
+  <div class="bg-white shadow-lg rounded-lg p-8 space-y-8">
     <!-- Profile Section -->
     <section
       id="profile"
-      class="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 shadow-md max-w-md mx-auto"
+      class="bg-gray-100 rounded-lg p-6 shadow-md max-w-md mx-auto"
     >
-      <h2
-        class="text-2xl font-semibold mb-4 border-b border-gray-300 dark:border-gray-700 pb-2"
-      >
+      <h2 class="text-2xl font-semibold mb-4 border-b border-gray-300 pb-2">
         Profile
       </h2>
       <div class="flex items-center space-x-4 mb-4">
@@ -60,13 +58,11 @@
           }}
         </div>
         <div class="flex flex-col">
-          <span class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          <span class="text-lg font-medium text-gray-900">
             {{ current_user.username if current_user.username else 'Name not
             set' }}
           </span>
-          <span class="text-sm text-gray-600 dark:text-gray-400">
-            {{ current_user.email }}
-          </span>
+          <span class="text-sm text-gray-600"> {{ current_user.email }} </span>
         </div>
       </div>
       <a
@@ -77,13 +73,11 @@
       </a>
     </section>
 
-    
-
     <!-- Feedback Section -->
     <section id="feedback" class="space-y-4">
       <button
         id="toggleFeedbackBtn"
-        class="w-full text-left text-xl font-semibold bg-gray-200 dark:bg-gray-700 rounded px-4 py-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300 flex justify-between items-center"
+        class="w-full text-left text-xl font-semibold bg-gray-200 rounded px-4 py-3 hover:bg-gray-300 transition duration-300 flex justify-between items-center"
       >
         Return Feedback
         <svg
@@ -106,7 +100,7 @@
         id="feedbackForm"
         method="POST"
         action="{{ url_for('submit_feedback') }}"
-        class="space-y-4 bg-gray-50 dark:bg-gray-900 p-6 rounded shadow-inner {% if open_form != 'feedback' %}hidden{% endif %}"
+        class="space-y-4 bg-gray-50 p-6 rounded shadow-inner {% if open_form != 'feedback' %}hidden{% endif %}"
       >
         <div>
           <label for="name" class="block mb-1 font-medium">Name</label>
@@ -150,12 +144,10 @@
 
     <!-- About App Section -->
     <section id="aboutApp" class="space-y-4">
-      <h2
-        class="text-2xl font-bold border-b border-gray-300 dark:border-gray-700 pb-2"
-      >
+      <h2 class="text-2xl font-bold border-b border-gray-300 pb-2">
         About the App
       </h2>
-      <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+      <p class="text-gray-700 leading-relaxed">
         This UPSC Preparation App is designed to provide aspirants with
         comprehensive tools and resources for their journey, including current
         affairs, interview guidance, previous year questions, detailed
@@ -163,9 +155,9 @@
         technologies ensuring a smooth, user-friendly experience across all
         devices.
       </p>
-      <p class="text-gray-600 dark:text-gray-400 italic text-sm">
+      <p class="text-gray-600 italic text-sm">
         Version: 1.0.0 &nbsp;&nbsp;|&nbsp;&nbsp; Developed by Yashasvi Choudhary
-        , Diksha Patil & Shivani Bhallavi
+        & Diksha Patil
       </p>
     </section>
   </div>
@@ -173,8 +165,6 @@
 
 <!-- Toggle Script -->
 <script>
- 
-
   // Toggle Feedback form
   const toggleFeedbackBtn = document.getElementById("toggleFeedbackBtn");
   const feedbackForm = document.getElementById("feedbackForm");
