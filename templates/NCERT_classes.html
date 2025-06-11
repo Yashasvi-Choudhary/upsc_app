@@ -1,40 +1,38 @@
 {% extends "base.html" %} {% block title %}Dashboard - UPSC Aspirant{% endblock
 %} {% block content %}
-<div class="bg-gray-100 min-h-screen p-8 ">
-<div
-  class=" dark:bg-gray-800 text-gray-900 dark:text-gray-100 max-w-6xl mx-auto p-6"
->
-  <div class="flex items-center space-x-32 mb-6">
-    <!-- Back Button -->
-    <a
-      href="/dashboard"
-      class="w-12 h-12 bg-white text-green-600 hover:bg-green-200 rounded-full flex items-center justify-center shadow transition-colors"
-      title="Back"
-    >
-      <i class="fas fa-arrow-left mr-2"></i>
-    </a>
+<div class="bg-gray-100 min-h-screen p-8">
+  <div class="text-gray-900 max-w-6xl mx-auto p-6">
+    <div class="flex items-center space-x-32 mb-6">
+      <!-- Back Button -->
+      <a
+        href="/dashboard"
+        class="w-12 h-12 bg-white text-green-600 hover:bg-green-200 rounded-full flex items-center justify-center shadow transition-colors"
+        title="Back"
+      >
+        <i class="fas fa-arrow-left mr-2"></i>
+      </a>
 
-    <!-- Heading -->
-    <h1 class="text-4xl font-extrabold text-black text-center">
-      Select Class
-    </h1>
-  </div>
+      <!-- Heading -->
+      <h1 class="text-4xl font-extrabold text-black text-center">
+        Select Class
+      </h1>
+    </div>
 
-  <!-- Class List in Grid Layout -->
-  <div
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4 mt-20"
-  >
-    {% for cls in classes %}
-    <a
-      href="{{ url_for('subject_select', selected_class=cls) }}"
-      class="bg-white border-2 border-green-300 rounded-xl h-40 flex items-center justify-center text-center shadow hover:bg-green-400 hover:shadow-lg transition duration-300 hover:bg-green-400 hover:text-white hover:scale-105"
+    <!-- Class List in Grid Layout -->
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 py-4 mt-20"
     >
-      <span class="text-xl font-semibold hover:text-white-800 ">
-        Class {{ cls | replace("Class", "") }}
-      </span>
-    </a>
-    {% endfor %}
+      {% for cls in classes %}
+      <a
+        href="{{ url_for('subject_select', selected_class=cls) }}"
+        class="bg-white border-2 border-green-300 rounded-xl h-40 flex items-center justify-center text-center shadow hover:bg-green-400 hover:shadow-lg transition duration-300 hover:bg-green-400 hover:text-white hover:scale-105"
+      >
+        <span class="text-xl font-semibold hover:text-white-800">
+          Class {{ cls | replace("Class", "") }}
+        </span>
+      </a>
+      {% endfor %}
+    </div>
   </div>
-</div>
 </div>
 {% endblock %}

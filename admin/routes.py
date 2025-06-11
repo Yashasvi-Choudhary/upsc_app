@@ -5,10 +5,8 @@ from models import User, UPSCPaper
 from sqlalchemy import or_
 from models import Syllabus ,Feedback
 
-
 admin_bp = Blueprint('admin', __name__)
 
-# Admin session check decorator
 def admin_login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -38,7 +36,7 @@ def dashboard():
 @admin_bp.route('/logout')
 def logout():
     session.clear() 
-    return redirect(url_for('admin.login'))   # Use function name, not template filename
+    return redirect(url_for('admin.login'))   
 
 @admin_bp.route('/manage_users')
 @admin_login_required
@@ -53,16 +51,14 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     
-    # Check if AJAX request by header
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Return JSON response to avoid page reload
+     
         return jsonify({'success': True, 'message': 'User deleted successfully.'})
     else:
-        # Fallback for normal form POST submit
+ 
         flash("User deleted successfully.", "success")
         return redirect(url_for('admin.manage_users'))
     
-
 
 @admin_bp.route('/manage_pyqs')
 @admin_login_required
@@ -144,12 +140,6 @@ def delete_pyq(pyq_id):
     flash("PYQ deleted successfully!", "success")
     return redirect(url_for('admin.manage_pyqs'))
 
-
-
-
-
-
-
 @admin_bp.route('/manage_syllabus', methods=['GET'])
 @admin_login_required
 def manage_syllabus():
@@ -212,8 +202,6 @@ def delete_syllabus(syllabus_id):
     db.session.commit()
     flash("Syllabus deleted successfully!", "success")
     return redirect(url_for('admin.manage_syllabus'))
-
-
 
 
 @admin_bp.route('/manage_feedbacks')
