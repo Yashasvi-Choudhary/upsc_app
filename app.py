@@ -16,7 +16,7 @@ from flask_login import (
     logout_user, current_user
 )
 from urllib.parse import urlparse
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup 
 from extensions import db
 import urllib3
 from models import User, Feedback   
