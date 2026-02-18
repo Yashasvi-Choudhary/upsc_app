@@ -93,8 +93,8 @@ def register():
 
 
 # Define your admin credentials (or fetch from config / DB later)
-ADMIN_EMAIL = "admin@example.com"
-ADMIN_PASSWORD = "admin123"
+ADMIN_EMAIL = "admin123@gmail.com"
+ADMIN_PASSWORD = "111111"
 
 # Login Route
 @app.route('/login', methods=['GET', 'POST'])
