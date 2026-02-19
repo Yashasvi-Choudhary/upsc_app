@@ -45,12 +45,15 @@ else:
     DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
 
-print("Using database URL:", DATABASE_URL)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-db.init_app(app)   
+db.init_app(app) 
+
+with app.app_context():
+    db.create_all()
+    
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
