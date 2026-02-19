@@ -115,8 +115,6 @@ def register():
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
-print("ENV ADMIN EMAIL:", os.getenv("ADMIN_EMAIL"))
-print("ENV ADMIN PASSWORD:", os.getenv("ADMIN_PASSWORD"))
 
 
 # Login Route
