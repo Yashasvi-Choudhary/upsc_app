@@ -25,7 +25,8 @@ from models import User, Feedback, UPSCPaper, Syllabus
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = os.getenv("SECRET_KEY")
+
 
 
 
@@ -41,11 +42,12 @@ else:
     DB_USER = os.getenv("DB_USER", "root")
     DB_PASSWORD = os.getenv("DB_PASSWORD", "")
     DB_NAME = os.getenv("DB_NAME", "upscdb")
-
     DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 
+print("Using database URL:", DATABASE_URL)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)   
@@ -740,4 +742,5 @@ def latest_updates():
     return render_template('latest_updates.html', updates=updates, categorized_updates=categorized_updates)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.getenv("FLASK_DEBUG", "False") == "True")
+
