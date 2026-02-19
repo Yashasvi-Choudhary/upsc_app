@@ -53,7 +53,7 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
-    
+
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -319,41 +319,13 @@ def syllabus_show_syllabus():
 @app.route('/syllabus/access/<int:syllabus_id>')
 @login_required
 def access_syllabus(syllabus_id):
-
     syllabus = Syllabus.query.get(syllabus_id)
 
     if not syllabus or not syllabus.link:
         return "Syllabus PDF not found", 404
 
-    link = syllabus.link
-    parsed_url = urlparse(link)
+    return redirect(url_for('static', filename=syllabus.link))
 
-    if parsed_url.scheme in ['http', 'https']:
-        return redirect(link)
-
-    elif parsed_url.scheme == 'file':
-
-        file_path = urllib.parse.unquote(parsed_url.path)
-
-        if os.name == 'nt' and file_path.startswith('/'):
-            file_path = file_path[1:]
-
-        if not os.path.exists(file_path):
-            return "Local PDF file not found", 404
-
-        filename = secure_filename(
-            f"{syllabus.exam_type}_{syllabus.paper_type}_{syllabus.year}.pdf"
-        )
-
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=filename,
-            mimetype='application/pdf'
-        )
-
-    else:
-        return "Invalid syllabus link format", 400
 
 
 
@@ -696,7 +668,7 @@ def fetch_updates():
     headers = {'User-Agent': 'Mozilla/5.0'}
     
     try:
-        response = requests.get(url, headers=headers, verify=False)
+        response = requests.get(url, headers=headers, timeout=5)
         response.raise_for_status()  
     except requests.exceptions.RequestException as e:
         print("Error fetching UPSC updates:", e)
