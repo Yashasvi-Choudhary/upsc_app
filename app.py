@@ -664,28 +664,25 @@ def interview_daf():
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_updates():
-    url = 'https://upsc.gov.in/whats-new'
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    
+    url = "https://upsc.gov.in/rssfeed"
     try:
-        response = requests.get(url, headers=headers, timeout=5)
-        response.raise_for_status()  
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print("Error fetching UPSC updates:", e)
+        print("RSS Fetch Error:", e)
         return []
 
-    soup = BeautifulSoup(response.content, 'html.parser')
-    updates = []
+    soup = BeautifulSoup(response.content, "xml")
+    items = soup.find_all("item")
 
-    for item in soup.select('div.view-content div.views-row'):
-        title_tag = item.find('a')
-        if title_tag:
-            title = title_tag.get_text(strip=True)
-            link = title_tag['href']
-            if not link.startswith('http'):
-                link = 'https://upsc.gov.in' + link
-            updates.append({'title': title, 'link': link})
+    updates = []
+    for item in items[:20]:
+        title = item.title.text
+        link = item.link.text
+        updates.append({"title": title, "link": link})
+
     return updates
+
 
 def categorize_updates(updates):
     categories = {
