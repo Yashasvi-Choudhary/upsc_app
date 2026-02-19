@@ -19,15 +19,34 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup 
 from extensions import db
 import urllib3
-from models import User, Feedback   
-from db_config import get_db_connection
+from models import User, Feedback, UPSCPaper, Syllabus 
 
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}/{os.getenv('DB_NAME')}"
+
+
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Railway case
+    if DATABASE_URL.startswith("mysql://"):
+        DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://")
+else:
+    # Local development fallback
+    DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_USER = os.getenv("DB_USER", "root")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+    DB_NAME = os.getenv("DB_NAME", "upscdb")
+
+    DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)   
 login_manager = LoginManager(app)
@@ -93,8 +112,12 @@ def register():
 
 
 # Define your admin credentials (or fetch from config / DB later)
-ADMIN_EMAIL = "admin@example.com"
-ADMIN_PASSWORD = "admin123"
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+
+print("ENV ADMIN EMAIL:", os.getenv("ADMIN_EMAIL"))
+print("ENV ADMIN PASSWORD:", os.getenv("ADMIN_PASSWORD"))
+
 
 # Login Route
 @app.route('/login', methods=['GET', 'POST'])
@@ -234,10 +257,6 @@ def submit_feedback():
     flash("Thank you for your feedback!", "success")
     return redirect(url_for('settings'))
 
-@app.route('/syllabus')
-@login_required
-def syllabus():
-    return render_template("syllabus.html")
 
 @app.route('/syllabus')
 @login_required
@@ -252,99 +271,87 @@ def syllabus_select_exam_type():
     return render_template('syllabus_select_exam_type.html')
 
 @app.route('/syllabus/select_paper_type')
+@login_required
 def syllabus_select_paper_type():
-   
-    """Page to select paper type based on the selected exam type"""
+
     exam_type = request.args.get('exam_type')
     if not exam_type:
         return redirect(url_for('syllabus_main'))
-    
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    
-    query = """
-        SELECT DISTINCT paper_type 
-        FROM syllabus 
-        WHERE exam_type = %s
-    """
-    cursor.execute(query, (exam_type,))
-    paper_types = cursor.fetchall()
-    conn.close()
-    
-    return render_template('syllabus_select_paper_type.html', 
-                          exam_type=exam_type, 
-                          paper_types=paper_types)
+
+    paper_types = db.session.query(Syllabus.paper_type)\
+        .filter_by(exam_type=exam_type)\
+        .distinct().all()
+
+    paper_types = [{"paper_type": row[0]} for row in paper_types]
+
+    return render_template(
+        'syllabus_select_paper_type.html',
+        exam_type=exam_type,
+        paper_types=paper_types
+    )
 
 @app.route('/syllabus/show_syllabus')
 @login_required
 def syllabus_show_syllabus():
-    """Show available syllabi for the selected exam and paper type"""
+
     exam_type = request.args.get('exam_type')
     paper_type = request.args.get('paper_type')
-    
+
     if not exam_type or not paper_type:
         return redirect(url_for('syllabus_main'))
-    
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    
-    query = """
-        SELECT id, exam_type, paper_type, year, link
-        FROM syllabus
-        WHERE exam_type = %s AND paper_type = %s
-        ORDER BY year DESC
-    """
-    cursor.execute(query, (exam_type, paper_type))
-    syllabi = cursor.fetchall()
-    conn.close()
-    
-    return render_template('syllabus_show_syllabus.html', 
-                          syllabi=syllabi, 
-                          exam_type=exam_type, 
-                          paper_type=paper_type)
+
+    syllabi = Syllabus.query.filter_by(
+        exam_type=exam_type,
+        paper_type=paper_type
+    ).order_by(Syllabus.year.desc()).all()
+
+    return render_template(
+        'syllabus_show_syllabus.html',
+        syllabi=syllabi,
+        exam_type=exam_type,
+        paper_type=paper_type
+    )
+
 
 @app.route('/syllabus/access/<int:syllabus_id>')
 @login_required
 def access_syllabus(syllabus_id):
-    """Access the syllabus PDF file - either download it or redirect to URL"""
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    
-    query = "SELECT link, exam_type, paper_type, year FROM syllabus WHERE id = %s"
-    cursor.execute(query, (syllabus_id,))
-    syllabus = cursor.fetchone()
-    conn.close()
-    
-    if not syllabus or not syllabus['link']:
+
+    syllabus = Syllabus.query.get(syllabus_id)
+
+    if not syllabus or not syllabus.link:
         return "Syllabus PDF not found", 404
-    
-    link = syllabus['link']
-    
+
+    link = syllabus.link
     parsed_url = urlparse(link)
 
     if parsed_url.scheme in ['http', 'https']:
-
         return redirect(link)
 
     elif parsed_url.scheme == 'file':
-  
+
         file_path = urllib.parse.unquote(parsed_url.path)
-        
+
         if os.name == 'nt' and file_path.startswith('/'):
             file_path = file_path[1:]
-        
+
         if not os.path.exists(file_path):
             return "Local PDF file not found", 404
 
-        filename = secure_filename(f"{syllabus['exam_type']}_{syllabus['paper_type']}_{syllabus['year']}.pdf")
-        
-        return send_file(file_path,
-                        as_attachment=True,
-                        download_name=filename,
-                        mimetype='application/pdf')
-    
+        filename = secure_filename(
+            f"{syllabus.exam_type}_{syllabus.paper_type}_{syllabus.year}.pdf"
+        )
+
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='application/pdf'
+        )
+
     else:
         return "Invalid syllabus link format", 400
+
 
 
 API_KEY = os.environ.get("API_KEY")
@@ -516,35 +523,39 @@ def book_select(selected_class, subject):
 @app.route('/pyq_examtype')
 @login_required
 def pyq_examtype():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT DISTINCT exam_type FROM upsc_papers")
-    exam_types = [row[0] for row in cursor.fetchall()]
-    conn.close()
+    exam_types = db.session.query(UPSCPaper.exam_type).distinct().all()
+    exam_types = [row[0] for row in exam_types]
     return render_template('pyq_examtype.html', exam_types=exam_types)
+
 
 @app.route('/pyq_papertype/<exam_type>')
 @login_required
 def pyq_papertype(exam_type):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT DISTINCT paper_type FROM upsc_papers WHERE exam_type = %s", (exam_type,))
-    paper_types = [row[0] for row in cursor.fetchall()]
-    conn.close()
-    return render_template('pyq_papertype.html', exam_type=exam_type, paper_types=paper_types)
+
+    paper_types = db.session.query(UPSCPaper.paper_type)\
+        .filter_by(exam_type=exam_type)\
+        .distinct().all()
+
+    paper_types = [row[0] for row in paper_types]
+
+    return render_template(
+        'pyq_papertype.html',
+        exam_type=exam_type,
+        paper_types=paper_types
+    )
 
 @app.route('/pyq_year/<exam_type>/<paper_type>')
 @login_required
 def pyq_year(exam_type, paper_type):
-    conn = get_db_connection()
-    cursor = conn.cursor()
 
-    cursor.execute(
-        "SELECT DISTINCT sub_paper_type FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND sub_paper_type IS NOT NULL",
-        (exam_type, paper_type)
-    )
-    sub_papers = [row[0] for row in cursor.fetchall()]
-    conn.close()
+    sub_papers = db.session.query(UPSCPaper.sub_paper_type)\
+        .filter(
+            UPSCPaper.exam_type == exam_type,
+            UPSCPaper.paper_type == paper_type,
+            UPSCPaper.sub_paper_type.isnot(None)
+        ).distinct().all()
+
+    sub_papers = [row[0] for row in sub_papers]
 
     if sub_papers:
         return render_template(
@@ -555,14 +566,11 @@ def pyq_year(exam_type, paper_type):
             item_type='language'
         )
     else:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT DISTINCT year FROM upsc_papers WHERE exam_type = %s AND paper_type = %s",
-            (exam_type, paper_type)
-        )
-        years = [row[0] for row in cursor.fetchall()]
-        conn.close()
+        years = db.session.query(UPSCPaper.year)\
+            .filter_by(exam_type=exam_type, paper_type=paper_type)\
+            .distinct().all()
+
+        years = [row[0] for row in years]
 
         return render_template(
             'pyq_year.html',
@@ -571,17 +579,21 @@ def pyq_year(exam_type, paper_type):
             years=years
         )
 
+
+
+
 @app.route('/pyq_year/<exam_type>/<paper_type>/<sub_paper_type>')
 @login_required
 def pyq_subpaper_year(exam_type, paper_type, sub_paper_type):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT DISTINCT year FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND sub_paper_type = %s",
-        (exam_type, paper_type, sub_paper_type)
-    )
-    years = [row[0] for row in cursor.fetchall()]
-    conn.close()
+
+    years = db.session.query(UPSCPaper.year)\
+        .filter_by(
+            exam_type=exam_type,
+            paper_type=paper_type,
+            sub_paper_type=sub_paper_type
+        ).distinct().all()
+
+    years = [row[0] for row in years]
 
     return render_template(
         'pyq_qualifying_year.html',
@@ -592,31 +604,31 @@ def pyq_subpaper_year(exam_type, paper_type, sub_paper_type):
         sub_paper_type=sub_paper_type
     )
 
+
+
 @app.route('/pyq_final/<exam_type>/<paper_type>/<int:year>')
 @app.route('/pyq_final/<exam_type>/<paper_type>/<sub_paper_type>/<int:year>')
 @login_required
 def pyq_final(exam_type, paper_type, year, sub_paper_type=None):
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+
+    query = UPSCPaper.query.filter_by(
+        exam_type=exam_type,
+        paper_type=paper_type,
+        year=year
+    )
 
     if sub_paper_type:
-        cursor.execute(
-            "SELECT pdf_link FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND sub_paper_type = %s AND year = %s",
-            (exam_type, paper_type, sub_paper_type, year)
-        )
-    else:
-        cursor.execute(
-            "SELECT pdf_link FROM upsc_papers WHERE exam_type = %s AND paper_type = %s AND year = %s",
-            (exam_type, paper_type, year)
-        )
+        query = query.filter_by(sub_paper_type=sub_paper_type)
 
-    row = cursor.fetchone()
-    conn.close()
+    paper = query.first()
 
-    if row:
-        return redirect(row['pdf_link'])
-    else:
-        return "PDF not found."
+    if paper:
+        return redirect(paper.pdf_link)
+
+    return "PDF not found."
+
+
+
 
 @app.route('/csat')
 def csat_practice():
@@ -729,7 +741,5 @@ def latest_updates():
     categorized_updates = categorize_updates(updates)
     return render_template('latest_updates.html', updates=updates, categorized_updates=categorized_updates)
 
-if __name__ == '__main__':
- with app.app_context():
-    db.create_all() 
+if __name__ == "__main__":
     app.run(debug=True)
