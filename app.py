@@ -663,27 +663,24 @@ def interview_daf():
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-import time
-
 def fetch_updates():
-    url = "https://www.upsc.gov.in/feeds/whats-new.xml"
-    retries = 3
-    for i in range(retries):
-        try:
-            response = requests.get(url, timeout=15)
-            response.raise_for_status()
-            break
-        except requests.exceptions.RequestException as e:
-            print(f"RSS Fetch Attempt {i+1} Failed: {e}")
-            time.sleep(2)
-    else:
-        return []  # after retries, return empty
+    url = "https://upsc.gov.in/rssfeed"
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print("RSS Fetch Error:", e)
+        return []
 
     soup = BeautifulSoup(response.content, "xml")
     items = soup.find_all("item")
+
     updates = []
     for item in items[:20]:
-        updates.append({"title": item.title.text, "link": item.link.text})
+        title = item.title.text
+        link = item.link.text
+        updates.append({"title": title, "link": link})
+
     return updates
 
 
