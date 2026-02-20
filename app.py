@@ -660,30 +660,32 @@ def interview_daf():
         pdf_folder_name=pdf_folder_name
     )
 
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+import time
+
 def fetch_updates():
-    url = 'https://upsc.gov.in/whats-new'
-    headers = {'User-Agent': 'Mozilla/5.0'}
-    
-    try:
-        response = requests.get(url, headers=headers, verify=False)
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print("Error fetching UPSC updates:", e)
-        return []
+    url = "https://www.upsc.gov.in/feeds/whats-new.xml"
+    retries = 3
+    for i in range(retries):
+        try:
+            response = requests.get(url, timeout=15)
+            response.raise_for_status()
+            break
+        except requests.exceptions.RequestException as e:
+            print(f"RSS Fetch Attempt {i+1} Failed: {e}")
+            time.sleep(2)
+    else:
+        return []  # after retries, return empty
 
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = BeautifulSoup(response.content, "xml")
+    items = soup.find_all("item")
     updates = []
-
-    for item in soup.select('div.view-content div.views-row'):
-        title_tag = item.find('a')
-        if title_tag:
-            title = title_tag.get_text(strip=True)
-            link = title_tag['href']
-            if not link.startswith('http'):
-                link = 'https://upsc.gov.in' + link
-            updates.append({'title': title, 'link': link})
-
+    for item in items[:20]:
+        updates.append({"title": item.title.text, "link": item.link.text})
     return updates
+
 
 def categorize_updates(updates):
     categories = {
@@ -693,7 +695,6 @@ def categorize_updates(updates):
         'Notifications': [],
         'Others': []
     }
-
     for update in updates:
         title = update['title'].lower()
         if 'result' in title:
@@ -706,7 +707,6 @@ def categorize_updates(updates):
             categories['Notifications'].append(update)
         else:
             categories['Others'].append(update)
-
     return categories
 
 @app.route('/latest-updates')
@@ -716,8 +716,6 @@ def latest_updates():
     categorized_updates = categorize_updates(updates)
     return render_template('latest_updates.html', updates=updates, categorized_updates=categorized_updates)
 
-
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port, debug=os.getenv("FLASK_DEBUG", "False") == "True")
+    app.run(debug=os.getenv("FLASK_DEBUG", "False") == "True")
+
