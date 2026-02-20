@@ -660,29 +660,30 @@ def interview_daf():
         pdf_folder_name=pdf_folder_name
     )
 
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 def fetch_updates():
-    url = "https://upsc.gov.in/rssfeed"
+    url = 'https://upsc.gov.in/whats-new'
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    
     try:
-        response = requests.get(url, timeout=5)
+        response = requests.get(url, headers=headers, verify=False)
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print("RSS Fetch Error:", e)
+        print("Error fetching UPSC updates:", e)
         return []
 
-    soup = BeautifulSoup(response.content, "xml")
-    items = soup.find_all("item")
-
+    soup = BeautifulSoup(response.content, 'html.parser')
     updates = []
-    for item in items[:20]:
-        title = item.title.text
-        link = item.link.text
-        updates.append({"title": title, "link": link})
+
+    for item in soup.select('div.view-content div.views-row'):
+        title_tag = item.find('a')
+        if title_tag:
+            title = title_tag.get_text(strip=True)
+            link = title_tag['href']
+            if not link.startswith('http'):
+                link = 'https://upsc.gov.in' + link
+            updates.append({'title': title, 'link': link})
 
     return updates
-
 
 def categorize_updates(updates):
     categories = {
@@ -692,6 +693,7 @@ def categorize_updates(updates):
         'Notifications': [],
         'Others': []
     }
+
     for update in updates:
         title = update['title'].lower()
         if 'result' in title:
@@ -704,6 +706,7 @@ def categorize_updates(updates):
             categories['Notifications'].append(update)
         else:
             categories['Others'].append(update)
+
     return categories
 
 @app.route('/latest-updates')
@@ -712,6 +715,7 @@ def latest_updates():
     updates = fetch_updates()
     categorized_updates = categorize_updates(updates)
     return render_template('latest_updates.html', updates=updates, categorized_updates=categorized_updates)
+
 
 if __name__ == "__main__":
     app.run(debug=os.getenv("FLASK_DEBUG", "False") == "True")
