@@ -717,6 +717,7 @@ def latest_updates():
     return render_template('latest_updates.html', updates=updates, categorized_updates=categorized_updates)
 
 
-if __name__ == "__main__":
-    app.run(debug=os.getenv("FLASK_DEBUG", "False") == "True")
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port, debug=os.getenv("FLASK_DEBUG", "False") == "True")
