@@ -16,11 +16,17 @@ from flask_login import (
     logout_user, current_user
 )
 from urllib.parse import urlparse
-from bs4 import BeautifulSoup 
+
 from extensions import db
 import urllib3
 from models import User, Feedback, UPSCPaper, Syllabus 
-
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
+import time
 
 load_dotenv()
 
@@ -664,24 +670,81 @@ def interview_daf():
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def fetch_updates():
-    url = "https://upsc.gov.in/rssfeed"
+    url = "https://www.upsc.gov.in/whats-new"
+
+    options = Options()
+    options.add_argument("--headless")      # Run without opening browser
+    options.add_argument("--disable-gpu")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--window-size=1920,1080")
+
+    driver = None
+
     try:
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        print("RSS Fetch Error:", e)
+        driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()),
+            options=options
+        )
+
+        driver.get(url)
+
+        # Wait for page to load
+        time.sleep(1.5)
+
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+
+        updates = []
+
+        # Find all links
+        links = soup.find_all("a", href=True)
+
+        for link in links:
+            title = link.get_text(strip=True)
+            href = link["href"]
+
+            if not title:
+                continue
+
+            # Ignore navigation links
+            if len(title) < 8:
+                continue
+
+            if href.startswith("/"):
+                href = "https://www.upsc.gov.in" + href
+
+            # Keep only UPSC document links
+            if (
+                "/sites/default/files/" in href
+                or "notification" in href.lower()
+                or "result" in href.lower()
+                or "exam" in href.lower()
+            ):
+                updates.append({
+                    "title": title,
+                    "link": href
+                })
+
+        # Remove duplicates
+        unique_updates = []
+        seen = set()
+
+        for item in updates:
+            if item["title"] not in seen:
+                seen.add(item["title"])
+                unique_updates.append(item)
+
+        print("Updates Found:", len(unique_updates))
+
+        return unique_updates[:20]
+
+    except Exception as e:
+        print("Fetch Error:", e)
         return []
 
-    soup = BeautifulSoup(response.content, "xml")
-    items = soup.find_all("item")
-
-    updates = []
-    for item in items[:20]:
-        title = item.title.text
-        link = item.link.text
-        updates.append({"title": title, "link": link})
-
-    return updates
+    finally:
+        if driver:
+            driver.quit()
 
 
 def categorize_updates(updates):
